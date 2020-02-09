@@ -1,0 +1,28 @@
+{
+    "name": "jve/jv-banners",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "authors": [
+        {
+            "name": "Joerg Velletti",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "typo3/cms-core": "^8.7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "JVE\\JvBanners\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JVE\\JvBanners\\Tests\\": "Tests"
+        }
+    },
+    "replace": {
+        "jv_banners": "self.version",
+        "typo3-ter/jv-banners": "self.version"
+    }
+}

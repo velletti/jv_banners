@@ -1,0 +1,108 @@
+{
+    "modules": [
+        {
+            "config": {
+                "position": [
+                    23,
+                    102
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": true,
+                    "_default1_show": false,
+                    "_default2_new_create": true,
+                    "_default3_edit_update": true,
+                    "_default4_delete": true,
+                    "customActions": [
+                        "disable",
+                        "enable",
+                        "reducePoints",
+                        "addPoints"
+                    ]
+                },
+                "name": "Connector",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": true,
+                    "categorizable": false,
+                    "description": "Connect a JVE Events Event to a SF Banner Object ",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "skipTypeConfiguration": false,
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "1007103641788"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsL10nModeExclude": false,
+                            "propertyIsRequired": false,
+                            "propertyName": "eventname",
+                            "propertyType": "String",
+                            "uid": "570047110999"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
+        }
+    ],
+    "properties": {
+        "backendModules": [],
+        "description": "",
+        "emConf": {
+            "category": "plugin",
+            "custom_category": "",
+            "dependsOn": "typo3 => 8.7.0-8.7.99\n",
+            "disableLocalization": true,
+            "disableVersioning": true,
+            "skipGenerateDocumentationTemplate": true,
+            "sourceLanguage": "en",
+            "state": "alpha",
+            "targetVersion": "8.7.0-8.7.99",
+            "version": "1.0.0"
+        },
+        "extensionKey": "jv_banners",
+        "name": "Banner Guthaben",
+        "originalExtensionKey": "",
+        "originalVendorName": "",
+        "persons": [
+            {
+                "company": "",
+                "email": "typo3@velletti.de",
+                "name": "Joerg Velletti",
+                "role": "Developer"
+            }
+        ],
+        "plugins": [
+            {
+                "actions": {
+                    "controllerActionCombinations": "Connector => new,create,list,disable,delete,enable,edit,update,reducePoints,addPoints",
+                    "noncacheableActions": "Connector => new,create,list,disable,delete,enable,edit,update,reducePoints,addPoints",
+                    "switchableActions": "List Banner Event Connection\nConnector->list;Connector->new;Connector->create;Connector->list;Connector->disable;Connector->delete;Connector->enable;Connector->edit;Connector->update;Connector->reducePoints;Connector->addPoints"
+                },
+                "description": "",
+                "key": "connector",
+                "name": "Banner Connector for Events"
+            }
+        ],
+        "vendorName": "JVE"
+    },
+    "wires": [],
+    "log": {
+        "last_modified": "2019-10-03 11:12",
+        "extension_builder_version": "8.10.3",
+        "be_user": " (1)"
+    }
+}
