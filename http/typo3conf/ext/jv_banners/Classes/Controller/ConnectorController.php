@@ -2,12 +2,24 @@
 namespace JVE\JvBanners\Controller;
 
 use JVE\JvBanners\Domain\Model\Banner;
+use JVE\JvBanners\Domain\Model\Connector;
+use JVE\JvBanners\Domain\Repository\BannerRepository;
+use JVE\JvBanners\Domain\Repository\ConnectorRepository;
 use JVE\JvBanners\Utility\AssetUtility;
 use JVE\JvEvents\Domain\Model\Event;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
+use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
+use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 /***
  *
@@ -23,13 +35,12 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 /**
  * ConnectorController
  */
-class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class ConnectorController extends ActionController
 {
     /**
      * connectorRepository
      *
-     * @var \JVE\JvBanners\Domain\Repository\ConnectorRepository
-     * @inject
+     * @var ConnectorRepository
      */
     protected $connectorRepository = null;
 
@@ -38,8 +49,7 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
     /**
      * persistencemanager
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
-     * @inject
+     * @var PersistenceManager
      */
     protected $persistenceManager = NULL ;
 
@@ -47,15 +57,15 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
     /**
      * BannerRepository
      *
-     * @var \JVE\JvBanners\Domain\Repository\BannerRepository;
+     * @var BannerRepository;
      */
     protected $bannerRepository = null;
 
     public function initializeAction()
     {
         parent::initializeAction();
-       // $this->bannerRepository = GeneralUtility::makeInstance("") ;
         $this->bannerRepository = $this->objectManager->get("JVE\\JvBanners\\Domain\\Repository\\BannerRepository");
+        $this->connectorRepository = $this->objectManager->get("JVE\\JvBanners\\Domain\\Repository\\ConnectorRepository");
         $this->persistenceManager = $this->objectManager->get("TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager");
     }
     /**
@@ -91,8 +101,13 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
      * action create
      *
      * @param Event $event
-     * @ignorevalidation $event
      * @return void
+     * @throws NoSuchArgumentException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws FileDoesNotExistException
+     * @throws IllegalObjectTypeException
+     * @TYPO3\CMS\Extbase\Annotation\IgnoreValidation("event")
      */
     public function createAction(Event $event)
     {
@@ -101,7 +116,11 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
         }
         if( !$event || !$returnUid ) {
             $this->addFlashMessage('Missing Arguments event and returnUid! ', AbstractMessage::ERROR);
-            $this->redirect("show" , "Event" , "JvEvents" ) ;
+            try {
+                $this->redirect("show", "Event", "JvEvents");
+            } catch (StopActionException $e) {
+            } catch (UnsupportedRequestTypeException $e) {
+            }
 
         }
 
@@ -157,7 +176,7 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
 
         $storage = ResourceFactory::getInstance()->getStorageObject(1);
 
-        /** @var \TYPO3\CMS\Core\Resource\File $file */
+        /** @var File $file */
         $file = $storage->getResourceFactoryInstance()->getFileObject($assetData['uid_local']) ;
         $asset->setFile($file) ;
 
@@ -174,11 +193,11 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
     /**
      * action edit
      *
-     * @param \JVE\JvBanners\Domain\Model\Connector $connector
-     * @ignorevalidation $connector
+     * @param Connector $connector
+     * @TYPO3\CMS\Extbase\Annotation\IgnoreValidation("connector")
      * @return void
      */
-    public function editAction(\JVE\JvBanners\Domain\Model\Connector $connector)
+    public function editAction(Connector $connector)
     {
         $this->view->assign('connector', $connector);
     }
@@ -186,10 +205,14 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
     /**
      * action update
      *
-     * @param \JVE\JvBanners\Domain\Model\Connector $connector
+     * @param Connector $connector
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws UnknownObjectException
      */
-    public function updateAction(\JVE\JvBanners\Domain\Model\Connector $connector)
+    public function updateAction(Connector $connector)
     {
         $this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
         $this->connectorRepository->update($connector);
@@ -199,10 +222,13 @@ class ConnectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
     /**
      * action delete
      *
-     * @param \JVE\JvBanners\Domain\Model\Connector $connector
+     * @param Connector $connector
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
      */
-    public function deleteAction(\JVE\JvBanners\Domain\Model\Connector $connector)
+    public function deleteAction(Connector $connector)
     {
         $this->addFlashMessage('The object was deleted. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
         $this->connectorRepository->remove($connector);
