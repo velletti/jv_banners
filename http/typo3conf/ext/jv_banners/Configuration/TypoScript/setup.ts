@@ -23,10 +23,17 @@ plugin.tx_jvbanners_connector {
         callDefaultActionIfActionCantBeResolved = 1
     }
 }
-config.tx_extbase.persistence.classes {
-    JVE\JvBanners\Domain\Model\Banner {
-        mapping {
-            tableName =  tx_sfbanners_domain_model_banner
+config.tx_extbase {
+    objects {
+        DERHANSEN\SfBanners\Domain\Model\Banner {
+            className = JVE\JvBanners\Domain\Model\Banner
+        }
+    }
+    persistence.classes {
+        JVE\JvBanners\Domain\Model\Banner {
+            mapping {
+                tableName =  tx_sfbanners_domain_model_banner
+            }
         }
     }
 

@@ -185,7 +185,7 @@ class ConnectorController extends ActionController
 
         $this->persistenceManager->persistAll() ;
 
-        $this->addFlashMessage('Banner for event ' . $event->getUid() . " - "  . $event->getName() . " Start: " . date( "D.m.Y" , $banner->getStarttime() ), 'Banner created', AbstractMessage::INFO);
+        $this->addFlashMessage('Banner for event ' . $event->getUid() . " - "  . $event->getName() . " Start: " . date( "D.m.Y" , $banner->getStarttime() ), 'Banner created', AbstractMessage::OK);
 
         $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
     }

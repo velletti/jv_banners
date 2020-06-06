@@ -1,0 +1,6 @@
+routeEnhancers:
+  PageTypeSuffix:
+    map:
+      'getBanner.html': 9001
+      'clickBanner.html': 9002
+
