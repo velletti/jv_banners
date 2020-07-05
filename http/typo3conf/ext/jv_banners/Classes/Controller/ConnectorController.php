@@ -172,20 +172,25 @@ class ConnectorController extends ActionController
         // create SysFile reference
         // uid_Local = Image uid_foreign = event ID wird Banner Id
         $assetData = AssetUtility::loadSysFileReference($event->getUid() , "tx_jvevents_domain_model_event" , "teaser_image") ;
-        $asset = AssetUtility::generateAssetfromSysFileReference( "tx_sfbanners_domain_model_banner" , "assets" , $assetData, "sys_file" , $link ) ;
+        if( is_array($assetData )) {
+            $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, "sys_file", $link);
 
-        $storage = ResourceFactory::getInstance()->getStorageObject(1);
+            $storage = ResourceFactory::getInstance()->getStorageObject(1);
 
-        /** @var File $file */
-        $file = $storage->getResourceFactoryInstance()->getFileObject($assetData['uid_local']) ;
-        $asset->setFile($file) ;
+            /** @var File $file */
+            $file = $storage->getResourceFactoryInstance()->getFileObject($assetData['uid_local']);
+            $asset->setFile($file);
 
-        $banner->addAsset($asset) ;
-        $this->bannerRepository->add($banner) ;
+            $banner->addAsset($asset);
+            $this->bannerRepository->add($banner);
 
-        $this->persistenceManager->persistAll() ;
+            $this->persistenceManager->persistAll();
 
-        $this->addFlashMessage('Banner for event ' . $event->getUid() . " - "  . $event->getName() . " Start: " . date( "D.m.Y" , $banner->getStarttime() ), 'Banner created', AbstractMessage::OK);
+            $this->addFlashMessage('Banner for event ' . $event->getUid() . " - " . $event->getName() . " Start: " . date("D.m.Y", $banner->getStarttime()), 'Banner created', AbstractMessage::OK);
+        } else {
+            $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", AbstractMessage::ERROR);
+
+        }
 
         $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
     }
