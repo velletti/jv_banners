@@ -154,11 +154,19 @@ class ConnectorController extends ActionController
 
         $banner->setStarttime($accessStart->sub($sDateDiff)->getTimestamp()) ;
 
+        /*   // set a banner but 1 day before event sotps
         $eDateDiff = new \DateInterval("P1D") ;
         $accessEnd = new \DateTime(  ) ;
         $accessEnd->setTimestamp( $event->getStartDate()->getTimestamp()) ;
 
         $banner->setEndtime($accessEnd->sub($eDateDiff)->getTimestamp() ) ;
+        */
+
+        // sets end Banner to midnight when event is on same day..
+        $accessEnd = new \DateTime(  ) ;
+        $accessEnd->setTimestamp( $event->getStartDate()->getTimestamp()) ;
+
+        $banner->setEndtime($accessEnd->getTimestamp() ) ;
 
         $link = $this->uriBuilder->reset()
         ->setTargetPageUid($returnUid )
