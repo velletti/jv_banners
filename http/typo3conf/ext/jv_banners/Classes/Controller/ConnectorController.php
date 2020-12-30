@@ -6,6 +6,7 @@ use JVE\JvBanners\Domain\Model\Connector;
 use JVE\JvBanners\Domain\Repository\BannerRepository;
 use JVE\JvBanners\Domain\Repository\ConnectorRepository;
 use JVE\JvBanners\Utility\AssetUtility;
+use JVE\JvEvents\Domain\Model\Category;
 use JVE\JvEvents\Domain\Model\Event;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
@@ -127,7 +128,21 @@ class ConnectorController extends ActionController
         /** @var Banner $banner */
         $banner = GeneralUtility::makeInstance("JVE\\JvBanners\\Domain\\Model\\Banner") ;
 
-        $banner->setPid(56) ;
+        $cat = $event->getEventCategory() ;
+        // banner Pid for Homepage = 56
+        $pageId = 56 ;
+        if( $cat ) {
+            /** @var Category $category */
+            foreach ($cat as $category ) {
+                if( $category->getUid() == 2 ) {
+                    // banner Pid for private lessons = 135
+                    $pageId = 135 ;
+                }
+            }
+        }
+        $banner->setPid($pageId ) ;
+
+
         $banner->setTitle( $event->getName());
         $banner->setType(0); // 0 = image, 1 = html Banner
         $banner->setDescription($event->getTeaser());
@@ -212,7 +227,7 @@ class ConnectorController extends ActionController
      */
     public function editAction(Connector $connector)
     {
-        $this->view->assign('connector', $connector);
+       // $this->view->assign('connector', $connector);
     }
 
     /**
@@ -227,8 +242,8 @@ class ConnectorController extends ActionController
      */
     public function updateAction(Connector $connector)
     {
-        $this->addFlashMessage('The object was updated. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
-        $this->connectorRepository->update($connector);
+        $this->addFlashMessage('The object NOT was updated. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
+      //  $this->connectorRepository->update($connector);
         $this->redirect('list');
     }
 
@@ -243,8 +258,8 @@ class ConnectorController extends ActionController
      */
     public function deleteAction(Connector $connector)
     {
-        $this->addFlashMessage('The object was deleted. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
-        $this->connectorRepository->remove($connector);
+        $this->addFlashMessage('The object was NOT deleted. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
+     //   $this->connectorRepository->remove($connector);
         $this->redirect('list');
     }
 
