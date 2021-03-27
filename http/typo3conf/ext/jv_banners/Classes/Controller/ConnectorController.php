@@ -198,7 +198,11 @@ class ConnectorController extends ActionController
         if( is_array($assetData )) {
             $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, "sys_file", $link);
 
-            $storage = ResourceFactory::getInstance()->getStorageObject(1);
+            /** @var ResourceFactory $factory */
+            $factory = GeneralUtility::makeInstance(ResourceFactory::class) ;
+
+            // ******* Maybe we need to make Uid of storage (fileadmin/userupload/ configurable !
+            $storage = $factory->getStorageObject(1);
 
             /** @var File $file */
             $file = $storage->getResourceFactoryInstance()->getFileObject($assetData['uid_local']);

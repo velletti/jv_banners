@@ -16,14 +16,14 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'plugin',
     'author' => 'Joerg Velletti',
     'author_email' => 'typo3@velletti.de',
-    'state' => 'alpha',
+    'state' => 'beta',
     'uploadfolder' => 0,
     'createDirs' => '',
     'clearCacheOnLoad' => 0,
-    'version' => '1.0.1',
+    'version' => '10.4.2',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-9.6.99',
+            'typo3' => '9.5.0-10.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],
