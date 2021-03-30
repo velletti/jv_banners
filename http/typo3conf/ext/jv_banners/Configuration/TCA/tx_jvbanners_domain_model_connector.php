@@ -15,9 +15,6 @@ return [
         'searchFields' => 'eventname',
         'iconfile' => 'EXT:jv_banners/Resources/Public/Icons/tx_jvbanners_domain_model_connector.gif'
     ],
-    'interface' => [
-        'showRecordFieldList' => 'hidden, eventname',
-    ],
     'types' => [
         '1' => ['showitem' => 'hidden, eventname, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'],
     ],
