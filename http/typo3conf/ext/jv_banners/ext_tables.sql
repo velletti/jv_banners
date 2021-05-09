@@ -20,3 +20,10 @@ CREATE TABLE tx_jvbanners_domain_model_connector (
 	KEY parent (pid),
 
 );
+
+#
+# Table structure for table 'tx_sfbanners_domain_model_banner'
+#
+CREATE TABLE tx_sfbanners_domain_model_banner (
+    link int(11) DEFAULT '0' NOT NULL,
+);

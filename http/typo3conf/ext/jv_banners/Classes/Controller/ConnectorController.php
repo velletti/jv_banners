@@ -195,6 +195,7 @@ class ConnectorController extends ActionController
         // create SysFile reference
         // uid_Local = Image uid_foreign = event ID wird Banner Id
         $assetData = AssetUtility::loadSysFileReference($event->getUid() , "tx_jvevents_domain_model_event" , "teaser_image") ;
+
         if( is_array($assetData )) {
             $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, "sys_file", $link);
 

@@ -23,6 +23,10 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /** @var integer */
     protected $endtime ;
 
+
+    /** @var integer */
+    protected $link ;
+
     /**
      * @return int
      */
@@ -70,4 +74,22 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     {
         $this->_versionedUid = $uid;
     }
+
+    /**
+     * @return int
+     */
+    public function getLink(): int
+    {
+        return $this->link;
+    }
+
+    /**
+     * @param int $link
+     */
+    public function setLink(int $link): void
+    {
+        $this->link = $link;
+    }
+
+
 }
