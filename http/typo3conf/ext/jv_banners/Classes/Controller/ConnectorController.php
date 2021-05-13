@@ -8,6 +8,7 @@ use JVE\JvBanners\Domain\Repository\ConnectorRepository;
 use JVE\JvBanners\Utility\AssetUtility;
 use JVE\JvEvents\Domain\Model\Category;
 use JVE\JvEvents\Domain\Model\Event;
+use JVE\JvEvents\Domain\Repository\EventRepository;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Resource\File;
@@ -62,10 +63,16 @@ class ConnectorController extends ActionController
      */
     protected $bannerRepository = null;
 
+    /**
+     * @var EventRepository
+     */
+    private $eventRepository;
+
     public function initializeAction()
     {
         parent::initializeAction();
         $this->bannerRepository = $this->objectManager->get("JVE\\JvBanners\\Domain\\Repository\\BannerRepository");
+        $this->eventRepository = $this->objectManager->get("JVE\\JvEvents\\Domain\\Repository\\EventRepository");
         $this->connectorRepository = $this->objectManager->get("JVE\\JvBanners\\Domain\\Repository\\ConnectorRepository");
         $this->persistenceManager = $this->objectManager->get("TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager");
     }
@@ -129,6 +136,7 @@ class ConnectorController extends ActionController
         $banner = GeneralUtility::makeInstance("JVE\\JvBanners\\Domain\\Model\\Banner") ;
 
         $cat = $event->getEventCategory() ;
+        $event->setTopEvent(1) ;
         // banner Pid for Homepage = 56
         $pageId = 56 ;
         if( $cat ) {
@@ -211,6 +219,7 @@ class ConnectorController extends ActionController
 
             $banner->addAsset($asset);
             $this->bannerRepository->add($banner);
+            $this->eventRepository->update($event);
 
             $this->persistenceManager->persistAll();
 
