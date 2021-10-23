@@ -168,6 +168,30 @@ class ConnectorController extends ActionController
         $banner->setversionedUid($event->getUid());
         $banner->setLanguage(-1);
         $banner->setLink($event->getUId() );
+
+        // delete any existing banner for same event
+        /** @var \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance( "TYPO3\\CMS\\Core\\Database\\ConnectionPool");
+
+        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        $queryBuilder = $connectionPool->getQueryBuilderForTable('tx_sfbanners_domain_model_banner') ;
+
+        $row = $queryBuilder ->select('uid' , 'starttime', 'endtime', 'impressions','clicks'   ) ->from('tx_sfbanners_domain_model_banner')
+            ->where( $queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter( $event->getUId() , \PDO::PARAM_INT)) )
+            ->orderBy("endtime" , "DESC")
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchAssociative();
+        if ( $row) {
+            $banner->setImpressions($row['impressions']);
+            $banner->setClicks($row['clicks']);
+
+            $queryBuilder->update('tx_sfbanners_domain_model_banner')
+                ->where($queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter($event->getUId(), \PDO::PARAM_INT)))
+                ->set("deleted", "1")->execute();
+        }
+
+
         // $banner->setAssets();
         $sDateDiff = new \DateInterval("P8D") ;
 
@@ -175,9 +199,9 @@ class ConnectorController extends ActionController
         $accessStart->setTimestamp( $event->getStartDate()->getTimestamp()) ;
 
 
-        $banner->setStarttime($accessStart->sub($sDateDiff)->getTimestamp()) ;
+        $banner->setStarttime($accessStart->sub($sDateDiff)->getTimestamp() + (3600)) ;
 
-        /*   // set a banner but 1 day before event sotps
+        /*   // set a banner but 1 day before event stops + 20 hours  if week is not full
         $eDateDiff = new \DateInterval("P1D") ;
         $accessEnd = new \DateTime(  ) ;
         $accessEnd->setTimestamp( $event->getStartDate()->getTimestamp()) ;
@@ -190,6 +214,9 @@ class ConnectorController extends ActionController
         $accessEnd->setTimestamp( $event->getStartDate()->getTimestamp()) ;
 
         $banner->setEndtime($accessEnd->getTimestamp() ) ;
+        if ( $event->getStartDate()->getTimestamp() - ( 2 * 24 * 3600 ) < time() ) {
+            $banner->setEndtime($accessEnd->getTimestamp() + (20 * 3600 ) ) ;
+        }
 
         $link = $this->uriBuilder->reset()
         ->setTargetPageUid($returnUid )
@@ -218,6 +245,7 @@ class ConnectorController extends ActionController
             $asset->setFile($file);
 
             $banner->addAsset($asset);
+
             $this->bannerRepository->add($banner);
             $this->eventRepository->update($event);
 
