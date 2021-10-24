@@ -9,6 +9,7 @@ use JVE\JvBanners\Utility\AssetUtility;
 use JVE\JvEvents\Domain\Model\Category;
 use JVE\JvEvents\Domain\Model\Event;
 use JVE\JvEvents\Domain\Repository\EventRepository;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Resource\File;
@@ -175,13 +176,17 @@ class ConnectorController extends ActionController
 
         /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
         $queryBuilder = $connectionPool->getQueryBuilderForTable('tx_sfbanners_domain_model_banner') ;
-
+        $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $row = $queryBuilder ->select('uid' , 'starttime', 'endtime', 'impressions','clicks'   ) ->from('tx_sfbanners_domain_model_banner')
             ->where( $queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter( $event->getUId() , \PDO::PARAM_INT)) )
+            ->andWhere( $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0 , \PDO::PARAM_INT)) )
+            ->andWhere( $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0 , \PDO::PARAM_INT)) )
             ->orderBy("endtime" , "DESC")
             ->setMaxResults(1)
             ->execute()
             ->fetchAssociative();
+
+
         if ( $row) {
             $banner->setImpressions($row['impressions']);
             $banner->setClicks($row['clicks']);
