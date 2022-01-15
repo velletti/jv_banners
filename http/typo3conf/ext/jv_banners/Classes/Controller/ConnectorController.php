@@ -123,6 +123,8 @@ class ConnectorController extends ActionController
         if( $this->request->hasArgument("returnPid")) {
             $returnUid = $this->request->getArgument("returnPid");
         }
+
+
         if( !$event || !$returnUid ) {
             $this->addFlashMessage('Missing Arguments event and returnUid! ', AbstractMessage::ERROR);
             try {
@@ -198,13 +200,27 @@ class ConnectorController extends ActionController
 
 
         // $banner->setAssets();
-        $sDateDiff = new \DateInterval("P8D") ;
+
 
         $accessStart = new \DateTime(  ) ;
+        $sDateDiff = new \DateInterval("P8D") ;
         $accessStart->setTimestamp( $event->getStartDate()->getTimestamp()) ;
-
-
         $banner->setStarttime($accessStart->sub($sDateDiff)->getTimestamp() + (3600)) ;
+
+        $endTime = PHP_INT_MAX ;
+        // with optional param startindays banner can start On same day ( if 1 ) or in one week ( f.e. 7 ) ,
+        if( $this->request->hasArgument("startindays") ) {
+            $startindays = intval ( $this->request->getArgument("startindays")) * ( 24 * 3600 )  + time()  - (25 * 3600 )  ;
+            if ( $startindays < $banner->getStarttime()) {
+                $banner->setStarttime( $startindays ) ;
+            }
+            $endTime = $banner->getStarttime() + ( 7 * 24 * 3600 ) ;
+        }
+
+
+
+
+
 
         /*   // set a banner but 1 day before event stops + 20 hours  if week is not full
         $eDateDiff = new \DateInterval("P1D") ;
@@ -218,7 +234,13 @@ class ConnectorController extends ActionController
         $accessEnd = new \DateTime(  ) ;
         $accessEnd->setTimestamp( $event->getStartDate()->getTimestamp()) ;
 
+
         $banner->setEndtime($accessEnd->getTimestamp() ) ;
+
+        // If banner start more than 7 days before event, (by param "startindays" )  need to stop it earlier
+        if ( $endTime < $banner->getEndtime() ) {
+            $banner->setEndtime( $endTime ) ;
+        }
         if ( $event->getStartDate()->getTimestamp() - ( 2 * 24 * 3600 ) < time() ) {
             $banner->setEndtime($accessEnd->getTimestamp() + (20 * 3600 ) ) ;
         }
