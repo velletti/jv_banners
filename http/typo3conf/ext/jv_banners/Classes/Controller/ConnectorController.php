@@ -10,6 +10,7 @@ use JVE\JvEvents\Domain\Model\Category;
 use JVE\JvEvents\Domain\Model\Event;
 use JVE\JvEvents\Domain\Repository\EventRepository;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Resource\File;
@@ -193,6 +194,9 @@ class ConnectorController extends ActionController
             $banner->setImpressions($row['impressions']);
             $banner->setClicks($row['clicks']);
 
+            $banner->setImpressionsMax((int)$row['impressions'] + 6000);
+            $banner->setClicksMax((int)$row['clicks'] + 400);
+
             $queryBuilder->update('tx_sfbanners_domain_model_banner')
                 ->where($queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter($event->getUId(), \PDO::PARAM_INT)))
                 ->set("deleted", "1")->execute();
@@ -283,6 +287,32 @@ class ConnectorController extends ActionController
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", AbstractMessage::ERROR);
 
         }
+        $link = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") .   $link  ;
+        $mailtext  =  "Banner: " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) .  "<br>\n" ;
+        $mailtext  .= "Event: " . $event->getName() . "<br>\n" ;
+        $mailtext .=  "Text: "  . $event->getTeaser() . "<br>\n"  . $banner->getHtml() . "<br>\n" . "<br>\n";
+        $mailtext .=  "Link: <a href=\""  .$link. "\"> " . $link . "</a><br>\n" ;
+        $mailtext .=  "Organizer: " . $event->getOrganizer()->getName() .  " " . $event->getOrganizer()->getEmail() . "<br>\n" . "<br>\n";
+        $mailtext .=  "Shown: "  .$banner->getImpressions() . "/"  .$banner->getImpressionsMax() . " | Clicked: "  .$banner->getClicks() . "/"  .$banner->getClicksMax() . "<br>\n" ;
+
+
+        $mail = new MailMessage();
+        $mail->setFrom("nl@tangomuenchen.de");
+
+        $mail->html($mailtext) ;
+        $mail->text(strip_tags( $mailtext)) ;
+
+        if( GeneralUtility::validEmail($event->getOrganizer()->getEmail())) {
+            $mail->setSubject("[Banner] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
+
+            $mail->setTo($event->getOrganizer()->getEmail()) ;
+            $mail->setCc("info@tangomuenchen.de");
+        } else {
+            $mail->setSubject("[Banner-NoMailTo] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
+
+            $mail->setTo("info@tangomuenchen.de");
+        }
+        $mail->send() ;
 
         $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
     }
