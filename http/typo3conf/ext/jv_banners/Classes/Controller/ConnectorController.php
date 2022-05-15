@@ -167,8 +167,8 @@ class ConnectorController extends ActionController
 
 
         $banner->setHtml($html);
-        $banner->setImpressionsMax(6000);
-        $banner->setClicksMax(400);
+        $banner->setImpressionsMax(10000);
+        $banner->setClicksMax(500);
         $banner->setversionedUid($event->getUid());
         $banner->setLanguage(-1);
         $banner->setLink($event->getUId() );
@@ -194,8 +194,8 @@ class ConnectorController extends ActionController
             $banner->setImpressions($row['impressions']);
             $banner->setClicks($row['clicks']);
 
-            $banner->setImpressionsMax((int)$row['impressions'] + 6000);
-            $banner->setClicksMax((int)$row['clicks'] + 400);
+            $banner->setImpressionsMax((int)$row['impressions'] + 10000);
+            $banner->setClicksMax((int)$row['clicks'] + 500);
 
             $queryBuilder->update('tx_sfbanners_domain_model_banner')
                 ->where($queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter($event->getUId(), \PDO::PARAM_INT)))
@@ -247,6 +247,13 @@ class ConnectorController extends ActionController
         }
         if ( $event->getStartDate()->getTimestamp() - ( 2 * 24 * 3600 ) < time() ) {
             $banner->setEndtime($accessEnd->getTimestamp() + (20 * 3600 ) ) ;
+        }
+
+        // overrule all Start/stop setting if StartIndDays = -1 to be able to stop a banner
+
+        if( $this->request->hasArgument("startindays") &&  $this->request->getArgument("startindays") == -1 ) {
+            $banner->setStarttime(time() - 3600 * 24  - 60 );
+            $banner->setEndtime(time() - 3600 * 24 );
         }
 
         $link = $this->uriBuilder->reset()
