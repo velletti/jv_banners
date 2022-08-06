@@ -140,7 +140,7 @@ class ConnectorController extends ActionController
         $banner = GeneralUtility::makeInstance("JVE\\JvBanners\\Domain\\Model\\Banner") ;
 
         $cat = $event->getEventCategory() ;
-        $event->setTopEvent(1) ;
+
         // banner Pid for Homepage = 56
         $pageId = 56 ;
         if( $cat ) {
@@ -152,8 +152,12 @@ class ConnectorController extends ActionController
                 }
             }
         }
+        $linkPageName = "Learn / Lernen" ;
+        if( $pageId == 56) {
+            $linkPageName = "Home" ;
+            $event->setTopEvent(1) ;
+        }
         $banner->setPid($pageId ) ;
-
 
         $banner->setTitle( $event->getName());
         $banner->setType(0); // 0 = image, 1 = html Banner
@@ -268,7 +272,16 @@ class ConnectorController extends ActionController
         // create SysFile reference
         // uid_Local = Image uid_foreign = event ID wird Banner Id
         $assetData = AssetUtility::loadSysFileReference($event->getUid() , "tx_jvevents_domain_model_event" , "teaser_image") ;
+        $imageFrom = "Event" ;
+        if( !is_array($assetData )) {
+            $imageFrom = "Location" ;
 
+            $assetData = AssetUtility::loadSysFileReference($event->getLocation()->getUid() , "tx_jvevents_domain_model_location" , "teaser_image") ;
+        }
+        if( !is_array($assetData )) {
+            $imageFrom = "Organizer" ;
+            $assetData = AssetUtility::loadSysFileReference($event->getOrganizer()->getUid() , "tx_jvevents_domain_model_organizer" , "teaser_image") ;
+        }
         if( is_array($assetData )) {
             $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, "sys_file", $link);
 
@@ -292,15 +305,22 @@ class ConnectorController extends ActionController
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - " . $event->getName() . " Start: " . date("D.m.Y", $banner->getStarttime()), 'Banner created', AbstractMessage::OK);
         } else {
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", AbstractMessage::ERROR);
-
+            $imageFrom = "Not Found" ;
         }
         $link = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") .   $link  ;
         $mailtext  =  "Banner: " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) .  "<br>\n" ;
         $mailtext  .= "Event: " . $event->getName() . "<br>\n" ;
+        $mailtext  .= "Image from: " . $imageFrom . "<br>\n" ;
         $mailtext .=  "Text: "  . $event->getTeaser() . "<br>\n"  . $banner->getHtml() . "<br>\n" . "<br>\n";
         $mailtext .=  "Link: <a href=\""  .$link. "\"> " . $link . "</a><br>\n" ;
+
+        $linkToBanner =  $this->uriBuilder->reset()->setTargetPageUid( $banner->getPid() )->build() ;
+        $linkToBanner = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") . $linkToBanner ;
+
         $mailtext .=  "Organizer: " . $event->getOrganizer()->getName() .  " " . $event->getOrganizer()->getEmail() . "<br>\n" . "<br>\n";
-        $mailtext .=  "Shown: "  .$banner->getImpressions() . "/"  .$banner->getImpressionsMax() . " | Clicked: "  .$banner->getClicks() . "/"  .$banner->getClicksMax() . "<br>\n" ;
+        $mailtext .=  "Shown/max Views: "  .$banner->getImpressions() . "/"  .$banner->getImpressionsMax() . " | Clicked/max Clicks: "  .$banner->getClicks() . "/"  .$banner->getClicksMax() . "<br>\n" ;
+        $mailtext .=  "<br>\n" ;
+        $mailtext .=   "Banner on page: <a href=\"" . $linkToBanner . "\">" .  $linkPageName . "</a><br>\n" ;
 
 
         $mail = new MailMessage();
