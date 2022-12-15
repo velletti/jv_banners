@@ -1,6 +1,7 @@
 <?php
 namespace JVE\JvBanners\Domain\Model;
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /***
  *
  * This file is part of the "Banner Guthaben" Extension for TYPO3 CMS.
@@ -11,11 +12,10 @@ namespace JVE\JvBanners\Domain\Model;
  *  (c) 2019 Joerg Velletti <typo3@velletti.de>
  *
  ***/
-
 /**
  * Connect a JVE Events Event to a SF Banner Object
  */
-class Connector extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Connector extends AbstractEntity
 {
     /**
      * eventname

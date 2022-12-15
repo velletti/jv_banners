@@ -1,6 +1,10 @@
 <?php
 namespace JVE\JvBanners\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use JVE\JvBanners\Domain\Model\Banner;
 use JVE\JvBanners\Domain\Model\Connector;
 use JVE\JvBanners\Domain\Repository\BannerRepository;
@@ -83,18 +87,20 @@ class ConnectorController extends ActionController
      *
      * @return void
      */
-    public function dummyAction()
+    public function dummyAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
     /**
      * action list
      *
      * @return void
      */
-    public function listAction()
+    public function listAction(): ResponseInterface
     {
         $connectors = $this->connectorRepository->findAll();
         $this->view->assign('connectors', $connectors);
+        return $this->htmlResponse();
     }
 
     /**
@@ -102,9 +108,9 @@ class ConnectorController extends ActionController
      *
      * @return void
      */
-    public function newAction()
+    public function newAction(): ResponseInterface
     {
-
+        return $this->htmlResponse();
     }
 
     /**
@@ -117,7 +123,7 @@ class ConnectorController extends ActionController
      * @throws UnsupportedRequestTypeException
      * @throws FileDoesNotExistException
      * @throws IllegalObjectTypeException
-     * @TYPO3\CMS\Extbase\Annotation\IgnoreValidation("event")
+     * @IgnoreValidation("event")
      */
     public function createAction(Event $event)
     {
@@ -178,10 +184,10 @@ class ConnectorController extends ActionController
         $banner->setLink($event->getUId() );
 
         // delete any existing banner for same event
-        /** @var \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool */
+        /** @var ConnectionPool $connectionPool */
         $connectionPool = GeneralUtility::makeInstance( "TYPO3\\CMS\\Core\\Database\\ConnectionPool");
 
-        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $connectionPool->getQueryBuilderForTable('tx_sfbanners_domain_model_banner') ;
         $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $row = $queryBuilder ->select('uid' , 'starttime', 'endtime', 'impressions','clicks'   ) ->from('tx_sfbanners_domain_model_banner')
@@ -348,12 +354,13 @@ class ConnectorController extends ActionController
      * action edit
      *
      * @param Connector $connector
-     * @TYPO3\CMS\Extbase\Annotation\IgnoreValidation("connector")
+     * @IgnoreValidation("connector")
      * @return void
      */
-    public function editAction(Connector $connector)
+    public function editAction(Connector $connector): ResponseInterface
     {
        // $this->view->assign('connector', $connector);
+       return $this->htmlResponse();
     }
 
     /**
@@ -394,9 +401,9 @@ class ConnectorController extends ActionController
      *
      * @return void
      */
-    public function disableAction()
+    public function disableAction(): ResponseInterface
     {
-
+        return $this->htmlResponse();
     }
 
     /**
@@ -404,9 +411,9 @@ class ConnectorController extends ActionController
      *
      * @return void
      */
-    public function enableAction()
+    public function enableAction(): ResponseInterface
     {
-
+        return $this->htmlResponse();
     }
 
     /**
@@ -414,9 +421,9 @@ class ConnectorController extends ActionController
      *
      * @return void
      */
-    public function reducePointsAction()
+    public function reducePointsAction(): ResponseInterface
     {
-
+        return $this->htmlResponse();
     }
 
     /**
@@ -424,9 +431,9 @@ class ConnectorController extends ActionController
      *
      * @return void
      */
-    public function addPointsAction()
+    public function addPointsAction(): ResponseInterface
     {
-
+        return $this->htmlResponse();
     }
 
 

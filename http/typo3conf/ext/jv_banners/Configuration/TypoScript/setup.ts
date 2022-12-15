@@ -29,13 +29,5 @@ config.tx_extbase {
             className = JVE\JvBanners\Domain\Model\Banner
         }
     }
-    persistence.classes {
-        JVE\JvBanners\Domain\Model\Banner {
-            mapping {
-                tableName =  tx_sfbanners_domain_model_banner
-            }
-        }
-    }
-
 }
 

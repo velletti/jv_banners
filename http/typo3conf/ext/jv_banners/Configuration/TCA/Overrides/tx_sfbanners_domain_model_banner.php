@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3_MODE') or die();
+defined('TYPO3') or die();
 
 $GLOBALS['TCA']['tx_sfbanners_domain_model_banner']['columns']['link']=
        [

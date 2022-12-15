@@ -1,6 +1,7 @@
 <?php
 namespace JVE\JvBanners\Utility;
 
+use JVE\JvMediaConnector\Domain\Model\FileReference;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -39,7 +40,7 @@ class AssetUtility{
     public static function generateAssetfromSysFileReference(   $table , $field, $assetData ,$tableLocal = 'sys_file' , $link = false ) {
 
 
-        /** @var \JVE\JvMediaConnector\Domain\Model\FileReference $asset */
+        /** @var FileReference $asset */
         $asset = GeneralUtility::makeInstance( "JVE\\JvMediaConnector\\Domain\\Model\\FileReference");
         $asset->setTablenames($table) ;
         $asset->setTableLocal($tableLocal) ;

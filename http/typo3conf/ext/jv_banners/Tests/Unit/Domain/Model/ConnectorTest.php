@@ -1,22 +1,24 @@
 <?php
 namespace JVE\JvBanners\Tests\Unit\Domain\Model;
 
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
+use JVE\JvBanners\Domain\Model\Connector;
 /**
  * Test case.
  *
  * @author Joerg Velletti <typo3@velletti.de>
  */
-class ConnectorTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class ConnectorTest extends UnitTestCase
 {
     /**
-     * @var \JVE\JvBanners\Domain\Model\Connector
+     * @var Connector
      */
     protected $subject = null;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->subject = new \JVE\JvBanners\Domain\Model\Connector();
+        $this->subject = new Connector();
     }
 
     protected function tearDown()

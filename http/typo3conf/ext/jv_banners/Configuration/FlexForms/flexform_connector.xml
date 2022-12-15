@@ -12,10 +12,11 @@
 							<label>Select function</label>
 							<config>
 								<type>select</type>
+<renderType>selectSingle</renderType>
 								<items>
 									<numIndex index="0">
 										<numIndex index="0">List Banner Event Connection</numIndex>
-										<numIndex index="1">Connector-&gt;dummy;Connector-&gt;new;Connector-&gt;create;Connector-&gt;list;Connector-&gt;disable;Connector-&gt;delete;Connector-&gt;enable;Connector-&gt;edit;Connector-&gt;update;Connector-&gt;reducePoints;Connector-&gt;addPoints</numIndex>
+										<numIndex index="1">Connector->dummy;Connector->new;Connector->create;Connector->list;Connector->disable;Connector->delete;Connector->enable;Connector->edit;Connector->update;Connector->reducePoints;Connector->addPoints</numIndex>
 									</numIndex>
 								</items>
 							</config>

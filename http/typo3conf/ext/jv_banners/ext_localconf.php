@@ -1,19 +1,19 @@
 <?php
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
 call_user_func(
     function()
     {
 
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-            'JVE.JvBanners',
+            'JvBanners',
             'Connector',
             [
-                'Connector' => 'dummy,new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
+                \JVE\JvBanners\Controller\ConnectorController::class => 'dummy,new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
             ],
             // non-cacheable actions
             [
-                'Connector' => 'new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
+                \JVE\JvBanners\Controller\ConnectorController::class => 'new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
             ]
         );
 
