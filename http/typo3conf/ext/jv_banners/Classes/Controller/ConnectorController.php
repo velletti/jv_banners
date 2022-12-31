@@ -2,6 +2,7 @@
 namespace JVE\JvBanners\Controller;
 
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -315,6 +316,25 @@ class ConnectorController extends ActionController
 
             $this->persistenceManager->persistAll();
 
+            $assetDataNew = AssetUtility::loadSysFileReference($banner->getUid() , "tx_sfbanners_domain_model_banner" , "assets") ;
+            if( $assetDataNew && $assetDataNew['uid'] > 0  && $assetData['uid_local'] ) {
+
+                /** @var ConnectionPool $connectionPool */
+                $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+
+                /** @var Connection $dbConnectionForSysRef */
+                $dbConnectionForSysRef = $connectionPool->getConnectionForTable('sys_file_reference');
+
+                /** @var QueryBuilder $queryBuilder */
+                $queryBuilder = $dbConnectionForSysRef->createQueryBuilder();
+
+                $queryBuilder
+                    ->update('sys_file_reference')
+                    ->set( 'uid_local' ,  intval( $assetData['uid_local'] ))
+                    ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($assetDataNew['uid'] , \PDO::PARAM_INT )) )
+                    ->execute();
+
+            }
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - " . $event->getName() . " Start: " . date("D.m.Y", $banner->getStarttime()), 'Banner created', AbstractMessage::OK);
         } else {
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", AbstractMessage::ERROR);
@@ -324,6 +344,7 @@ class ConnectorController extends ActionController
         $mailtext  =  "Banner: " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) .  "<br>\n" ;
         $mailtext  .= "Event: " . $event->getName() . "<br>\n" ;
         $mailtext  .= "Image from: " . $imageFrom . "<br>\n" ;
+        $mailtext  .= "Assert : " .  $assetDataNew['uid'] . " => uid_local: " . $assetData['uid_local'] .  "<br>\n" ;
         $mailtext .=  "Text: "  . $event->getTeaser() . "<br>\n"  . $banner->getHtml() . "<br>\n" . "<br>\n";
         $mailtext .=  "Link: <a href=\""  .$link. "\"> " . $link . "</a><br>\n" ;
 
