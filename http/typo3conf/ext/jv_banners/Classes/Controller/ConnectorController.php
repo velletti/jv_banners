@@ -232,10 +232,6 @@ class ConnectorController extends ActionController
         }
 
 
-
-
-
-
         /*   // set a banner but 1 day before event stops + 20 hours  if week is not full
         $eDateDiff = new \DateInterval("P1D") ;
         $accessEnd = new \DateTime(  ) ;
@@ -257,6 +253,17 @@ class ConnectorController extends ActionController
         }
         if ( $event->getStartDate()->getTimestamp() - ( 2 * 24 * 3600 ) < time() ) {
             $banner->setEndtime($accessEnd->getTimestamp() + (20 * 3600 ) ) ;
+        }
+        // final again Set sart day in 2 / 3 days, even if week is not full
+        if( $this->request->hasArgument("startindays") ) {
+            $startindays = intval ( $this->request->getArgument("startindays")) * ( 24 * 3600 )  + time()  - (25 * 3600 )  ;
+            if ( $startindays < $banner->getEndtime()) {
+                $banner->setStarttime( $startindays ) ;
+            }
+        }
+        // never set startdate in past
+        if(   $banner->getStarttime() < ( time() - 7200 ) ) {
+            $banner->setStarttime( time()  ) ;
         }
 
         // overrule all Start/stop setting if StartIndDays = -1 to be able to stop a banner
