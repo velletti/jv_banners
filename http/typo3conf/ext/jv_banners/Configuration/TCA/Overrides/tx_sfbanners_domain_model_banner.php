@@ -1,6 +1,7 @@
 <?php
 defined('TYPO3') or die();
 
+$GLOBALS['TCA']['tx_sfbanners_domain_model_banner']['ctrl']['sortby']='crdate DESC' ;
 $GLOBALS['TCA']['tx_sfbanners_domain_model_banner']['columns']['link']=
        [
             'exclude' => 1,

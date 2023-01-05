@@ -331,6 +331,7 @@ class ConnectorController extends ActionController
                 $queryBuilder
                     ->update('sys_file_reference')
                     ->set( 'uid_local' ,  intval( $assetData['uid_local'] ))
+                    ->set( 'link' ,  $link )
                     ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($assetDataNew['uid'] , \PDO::PARAM_INT )) )
                     ->execute();
 
