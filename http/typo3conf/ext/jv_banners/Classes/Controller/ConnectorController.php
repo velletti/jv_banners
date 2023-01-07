@@ -360,7 +360,7 @@ class ConnectorController extends ActionController
         $mailtext .=  "Organizer: " . $event->getOrganizer()->getName() .  " " . $event->getOrganizer()->getEmail() . "<br>\n" . "<br>\n";
         $mailtext .=  "Shown/max Views: "  .$banner->getImpressions() . "/"  .$banner->getImpressionsMax() . " | Clicked/max Clicks: "  .$banner->getClicks() . "/"  .$banner->getClicksMax() . "<br>\n" ;
         $mailtext .=  "<br>\n" ;
-        $mailtext .=   "Banner on page: <a href=\"" . $linkToBanner . "\">" .  $linkPageName . "</a><br>\n" ;
+        $mailtext .=   "Banner Id " .  $banner->getUid() . " will be visible on page: <a href=\"" . $linkToBanner . "\">" .  $linkPageName . "</a><br>\n" ;
 
 
         $mail = new MailMessage();
