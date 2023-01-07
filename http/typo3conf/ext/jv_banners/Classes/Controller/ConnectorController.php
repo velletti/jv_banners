@@ -349,7 +349,12 @@ class ConnectorController extends ActionController
         $mailtext .=  "Text: "  . $event->getTeaser() . "<br>\n"  . $banner->getHtml() . "<br>\n" . "<br>\n";
         $mailtext .=  "Link: <a href=\""  .$link. "\"> " . $link . "</a><br>\n" ;
 
-        $linkToBanner =  $this->uriBuilder->reset()->setTargetPageUid( $banner->getPid() )->build() ;
+        if ( $banner->getPid() == 56 ) {
+            $linkToBanner =  $this->uriBuilder->reset()->setTargetPageUid( 1 )->build() ;
+        } else {
+            $linkToBanner =  $this->uriBuilder->reset()->setTargetPageUid( 131 )->build() ;
+        }
+
         $linkToBanner = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") . $linkToBanner ;
 
         $mailtext .=  "Organizer: " . $event->getOrganizer()->getName() .  " " . $event->getOrganizer()->getEmail() . "<br>\n" . "<br>\n";
