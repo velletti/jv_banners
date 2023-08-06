@@ -2,6 +2,7 @@
 namespace JVE\JvBanners\Utility;
 
 use JVE\JvMediaConnector\Domain\Model\FileReference;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -56,5 +57,33 @@ class AssetUtility{
 	}
 
 
+    public static function updateUidLocal($uid , $row ) {
+
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance( "TYPO3\\CMS\\Core\\Database\\ConnectionPool");
+        try {
+            /** @var QueryBuilder $queryBuilder */
+            $queryBuilder = $connectionPool->getConnectionForTable('sys_file_reference')->createQueryBuilder();
+            $queryBuilder->update('sys_file_reference')
+                ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter( $uid , PDO::PARAM_INT)) ) ;
+
+            foreach ( $row as $field => $value ) {
+                if( $field != "uid") {
+                    if ( is_int( $value )) {
+                        $queryBuilder->set($field , $value ,false ) ;
+                    } else {
+                        $queryBuilder->set($field , $value ) ;
+                    }
+                }
+            }
+           // var_dump( $queryBuilder->getSQL() );
+            // var_dump( $queryBuilder->getParameters() );
+            // die;
+            $queryBuilder->execute();
+        } catch ( \Exception $e) {
+            // ignore
+            // var_dump($e->getMessage() );
+        }
+    }
 
 }
