@@ -17,10 +17,10 @@ $EM_CONF["jv_banners"] = [
     'author' => 'Joerg Velletti',
     'author_email' => 'typo3@velletti.de',
     'state' => 'beta',
-    'version' => '11.5.1',
+    'version' => '12.4.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '11.5.0-11.45.99',
+            'typo3' => '12.4.0-12.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],
