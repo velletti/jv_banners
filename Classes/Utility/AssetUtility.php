@@ -1,5 +1,5 @@
 <?php
-namespace JVE\JvBanners\Utility;
+namespace JVelletti\JvBanners\Utility;
 
 use JVE\JvMediaConnector\Domain\Model\FileReference;
 use PDO;

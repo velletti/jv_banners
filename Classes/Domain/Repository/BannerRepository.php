@@ -1,5 +1,5 @@
 <?php
-namespace JVE\JvBanners\Domain\Repository;
+namespace JVelletti\JvBanners\Domain\Repository;
 
 /***
  *

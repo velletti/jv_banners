@@ -1,5 +1,5 @@
 <?php
-namespace JVE\JvBanners\Domain\Model;
+namespace JVelletti\JvBanners\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /***

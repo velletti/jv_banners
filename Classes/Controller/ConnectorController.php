@@ -1,19 +1,19 @@
 <?php
-namespace JVE\JvBanners\Controller;
+namespace JVelletti\JvBanners\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use JVE\JvBanners\Domain\Model\Banner;
-use JVE\JvBanners\Domain\Model\Connector;
-use JVE\JvBanners\Domain\Repository\BannerRepository;
-use JVE\JvBanners\Domain\Repository\ConnectorRepository;
-use JVE\JvBanners\Utility\AssetUtility;
-use JVE\JvEvents\Domain\Model\Category;
-use JVE\JvEvents\Domain\Model\Event;
-use JVE\JvEvents\Domain\Repository\EventRepository;
+use JVelletti\JvBanners\Domain\Model\Banner;
+use JVelletti\JvBanners\Domain\Model\Connector;
+use JVelletti\JvBanners\Domain\Repository\BannerRepository;
+use JVelletti\JvBanners\Domain\Repository\ConnectorRepository;
+use JVelletti\JvBanners\Utility\AssetUtility;
+use JVelletti\JvEvents\Domain\Model\Category;
+use JVelletti\JvEvents\Domain\Model\Event;
+use JVelletti\JvEvents\Domain\Repository\EventRepository;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -78,10 +78,12 @@ class ConnectorController extends ActionController
     public function initializeAction()
     {
         parent::initializeAction();
-        $this->bannerRepository = $this->objectManager->get("JVE\\JvBanners\\Domain\\Repository\\BannerRepository");
-        $this->eventRepository = $this->objectManager->get("JVE\\JvEvents\\Domain\\Repository\\EventRepository");
-        $this->connectorRepository = $this->objectManager->get("JVE\\JvBanners\\Domain\\Repository\\ConnectorRepository");
-        $this->persistenceManager = $this->objectManager->get("TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager");
+
+        $this->bannerRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\BannerRepository") ;
+
+        $this->eventRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\EventRepository") ;
+        $this->connectorRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\ConnectorRepository") ;
+        $this->persistenceManager = GeneralUtility::makeInstance("TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager") ;
     }
     /**
      * action Dummy

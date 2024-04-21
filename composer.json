@@ -1,5 +1,5 @@
 {
-    "name": "jve/jv-banners",
+    "name": "jvelletti/jv-banners",
     "type": "typo3-cms-extension",
     "description": "",
     "authors": [
@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "JVE\\JvBanners\\": "Classes"
+            "JVelletti\\JvBanners\\": "Classes"
         }
     },
       "replace": {
