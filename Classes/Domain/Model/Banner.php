@@ -24,13 +24,13 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     protected $endtime ;
 
 
-    /** @var integer */
-    protected $link ;
+    /** @var string */
+    protected string $link ;
 
     /**
      * @return int
      */
-    public function getEndtime()
+    public function getEndtime(): int
     {
         return $this->endtime;
     }
@@ -38,7 +38,7 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /**
      * @param int $endtime
      */
-    public function setEndtime($endtime)
+    public function setEndtime($endtime): void
     {
         $this->endtime = $endtime;
     }
@@ -46,7 +46,7 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /**
      * @return int
      */
-    public function getStarttime()
+    public function getStarttime(): int
     {
         return $this->starttime;
     }
@@ -54,7 +54,7 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /**
      * @param int $starttime
      */
-    public function setStarttime($starttime)
+    public function setStarttime($starttime): void
     {
         $this->starttime = $starttime;
     }
@@ -62,7 +62,7 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /**
      * @param int $lng
      */
-    public function setLanguage($lng)
+    public function setLanguage($lng): void
     {
         $this->_languageUid = $lng;
     }
@@ -70,26 +70,22 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /**
      * @param int $uid
      */
-    public function setversionedUid($uid)
+    public function setversionedUid($uid): void
     {
         $this->_versionedUid = $uid;
     }
 
-    /**
-     * @return int
-     */
-    public function getLink(): int
+    public function getLink(): string
     {
         return $this->link;
     }
 
-    /**
-     * @param int $link
-     */
-    public function setLink(int $link): void
+    public function setLink(string $link): void
     {
         $this->link = $link;
     }
+
+
 
 
 }

@@ -9,11 +9,11 @@ call_user_func(
             'JvBanners',
             'Connector',
             [
-                \JVE\JvBanners\Controller\ConnectorController::class => 'dummy,new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
+                \JVelletti\JvBanners\Controller\ConnectorController::class => 'dummy,new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
             ],
             // non-cacheable actions
             [
-                \JVE\JvBanners\Controller\ConnectorController::class => 'new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
+                \JVelletti\JvBanners\Controller\ConnectorController::class => 'new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
             ]
         );
 

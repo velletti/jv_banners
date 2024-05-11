@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "typo3/cms-core": "^12.4"
+        "typo3/cms-core": "^12.4",
+        "derhansen/sf_banners": "^7.0"
     },
     "autoload": {
         "psr-4": {

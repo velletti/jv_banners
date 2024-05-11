@@ -1,6 +1,7 @@
 <?php
 namespace JVelletti\JvBanners\Controller;
 
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
@@ -23,8 +24,6 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
@@ -81,7 +80,7 @@ class ConnectorController extends ActionController
 
         $this->bannerRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\BannerRepository") ;
 
-        $this->eventRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\EventRepository") ;
+        $this->eventRepository = GeneralUtility::makeInstance("JVelletti\\JvEvents\\Domain\\Repository\\EventRepository") ;
         $this->connectorRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\ConnectorRepository") ;
         $this->persistenceManager = GeneralUtility::makeInstance("TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager") ;
     }
@@ -120,10 +119,7 @@ class ConnectorController extends ActionController
      * action create
      *
      * @param Event $event
-     * @return void
      * @throws NoSuchArgumentException
-     * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      * @throws FileDoesNotExistException
      * @throws IllegalObjectTypeException
      * @IgnoreValidation("event")
@@ -138,15 +134,14 @@ class ConnectorController extends ActionController
         if( !$event || !$returnUid ) {
             $this->addFlashMessage('Missing Arguments event and returnUid! ', AbstractMessage::ERROR);
             try {
-                $this->redirect("show", "Event", "JvEvents");
-            } catch (StopActionException $e) {
-            } catch (UnsupportedRequestTypeException $e) {
+                return $this->redirect("show", "Event", "JvEvents");
+            } catch (Exception $e) {
             }
 
         }
 
         /** @var Banner $banner */
-        $banner = GeneralUtility::makeInstance("JVE\\JvBanners\\Domain\\Model\\Banner") ;
+        $banner = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Model\\Banner") ;
 
         $cat = $event->getEventCategory() ;
 
@@ -184,7 +179,7 @@ class ConnectorController extends ActionController
         $banner->setClicksMax(500);
         $banner->setversionedUid($event->getUid());
         $banner->setLanguage(-1);
-        $banner->setLink($event->getUId() );
+        $banner->setLink((string)$event->getUId() );
 
         // delete any existing banner for same event
         /** @var ConnectionPool $connectionPool */
@@ -383,7 +378,7 @@ class ConnectorController extends ActionController
         }
         $mail->send() ;
 
-        $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
+        return $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
     }
 
     /**
@@ -403,39 +398,29 @@ class ConnectorController extends ActionController
      * action update
      *
      * @param Connector $connector
-     * @return void
-     * @throws IllegalObjectTypeException
-     * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
-     * @throws UnknownObjectException
      */
     public function updateAction(Connector $connector)
     {
         $this->addFlashMessage('The object NOT was updated. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
       //  $this->connectorRepository->update($connector);
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
     /**
      * action delete
      *
      * @param Connector $connector
-     * @return void
-     * @throws IllegalObjectTypeException
-     * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      */
-    public function deleteAction(Connector $connector)
+    public function deleteAction(Connector $connector): ResponseInterface
     {
         $this->addFlashMessage('The object was NOT deleted. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
      //   $this->connectorRepository->remove($connector);
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
     /**
      * action disable
      *
-     * @return void
      */
     public function disableAction(): ResponseInterface
     {
@@ -445,7 +430,6 @@ class ConnectorController extends ActionController
     /**
      * action enable
      *
-     * @return void
      */
     public function enableAction(): ResponseInterface
     {
@@ -455,7 +439,6 @@ class ConnectorController extends ActionController
     /**
      * action reducePoints
      *
-     * @return void
      */
     public function reducePointsAction(): ResponseInterface
     {
@@ -465,7 +448,6 @@ class ConnectorController extends ActionController
     /**
      * action addPoints
      *
-     * @return void
      */
     public function addPointsAction(): ResponseInterface
     {

@@ -7,7 +7,23 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
+					<settings.mustHaveGroups>
+						<TCEforms>
+							<label>User Must Have Groups</label>
+							<config>
+								<type>select</type>
+								<renderType>selectMultipleSideBySide</renderType>
 
+								<foreign_table>fe_groups</foreign_table>
+								<foreign_table_where> ORDER BY fe_groups.title</foreign_table_where>
+								<allowed>fe_groups</allowed>
+								<size>4</size>
+								<minitems>0</minitems>
+								<maxitems>10</maxitems>
+
+							</config>
+						</TCEforms>
+					</settings.mustHaveGroups>
 				</el>
 			</ROOT>
 		</sDEF>
