@@ -4,6 +4,7 @@ namespace JVelletti\JvBanners\Controller;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Extbase\Annotation\IgnoreValidation;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -333,9 +334,9 @@ class ConnectorController extends ActionController
                     ->execute();
 
             }
-            $this->addFlashMessage('Banner for event ' . $event->getUid() . " - " . $event->getName() . " Start: " . date("D.m.Y", $banner->getStarttime()), 'Banner created', AbstractMessage::OK);
+            $this->addFlashMessage('Banner for event ' . $event->getUid() . " - " . $event->getName() . " Start: " . date("D.m.Y", $banner->getStarttime()), 'Banner created', ContextualFeedbackSeverity::OK);
         } else {
-            $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", AbstractMessage::ERROR);
+            $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", ContextualFeedbackSeverity::ERROR);
             $imageFrom = "Not Found" ;
         }
         $link = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") .   $link  ;
