@@ -90,8 +90,8 @@ class BannerUpdateWizard implements UpgradeWizardInterface
     protected function updateRow(array $row): void
     {
         $newLink = str_replace(
-            "tx_jvevents_events%5Baction%5D=show&tx_jvevents_events%5Bevent",
-            "tx_jvevents_events%5Baction%5D=show&tx_jvevents_events%5Bevent",
+             "tx_jvevents_events%5Baction%5D=show&tx_jvevents_events%5Bevent",
+             "tx_jvevents_event%5Baction%5D=show&tx_jvevents_event%5Bevent",
             $row['link']
         ) ;
 
