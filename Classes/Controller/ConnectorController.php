@@ -360,9 +360,9 @@ class ConnectorController extends ActionController
         $mailtext .=  "<br>\n" ;
         $mailtext .=   "Banner Id " .  $banner->getUid() . " will be visible on page: <a href=\"" . $linkToBanner . "\">" .  $linkPageName . "</a><br>\n" ;
 
-
+        $fromEmail = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] ;
         $mail = new MailMessage();
-        $mail->setFrom("info@tangobayern.de");
+        $mail->setFrom($fromEmail);
 
         $mail->html($mailtext) ;
         $mail->text(strip_tags( $mailtext)) ;
@@ -371,11 +371,11 @@ class ConnectorController extends ActionController
             $mail->setSubject("[Banner] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
             $mail->setTo($event->getOrganizer()->getEmail()) ;
-            $mail->setCc("info@tangobayern.de");
+            $mail->setCc($fromEmail);
         } else {
             $mail->setSubject("[Banner-NoMailTo] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
-            $mail->setTo("info@tangobayern.de");
+            $mail->setTo($fromEmail);
         }
         $mail->send() ;
 
