@@ -362,7 +362,7 @@ class ConnectorController extends ActionController
 
 
         $mail = new MailMessage();
-        $mail->setFrom("nl@tangomuenchen.de");
+        $mail->setFrom("info@tangobayern.de");
 
         $mail->html($mailtext) ;
         $mail->text(strip_tags( $mailtext)) ;
@@ -371,11 +371,11 @@ class ConnectorController extends ActionController
             $mail->setSubject("[Banner] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
             $mail->setTo($event->getOrganizer()->getEmail()) ;
-            $mail->setCc("info@tangomuenchen.de");
+            $mail->setCc("info@tangobayern.de");
         } else {
             $mail->setSubject("[Banner-NoMailTo] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
-            $mail->setTo("info@tangomuenchen.de");
+            $mail->setTo("info@tangobayern.de");
         }
         $mail->send() ;
 
