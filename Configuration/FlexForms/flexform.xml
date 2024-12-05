@@ -1,0 +1,26 @@
+<T3DataStructure>
+	<sheets>
+		<sDEF>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>Banner OverView Settings</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<settings.maxdays>
+						<TCEforms>
+							<label>number of days  to show</label>
+							<config>
+								<type>input</type>
+								<size>10</size>
+								<default>90</default>
+								<eval>int</eval>
+
+							</config>
+						</TCEforms>
+					</settings.maxdays>
+				</el>
+			</ROOT>
+		</sDEF>
+	</sheets>
+</T3DataStructure>

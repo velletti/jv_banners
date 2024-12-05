@@ -1,6 +1,8 @@
 <?php
 namespace JVelletti\JvBanners\Domain\Repository;
 
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+
 /***
  *
  * This file is part of the "Banner Guthaben" Extension for TYPO3 CMS.
@@ -17,4 +19,5 @@ namespace JVelletti\JvBanners\Domain\Repository;
  */
 class BannerRepository extends \DERHANSEN\SfBanners\Domain\Repository\BannerRepository
 {
+    protected $defaultOrderings = ['endtime' => QueryInterface::ORDER_DESCENDING];
     }

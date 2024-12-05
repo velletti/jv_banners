@@ -38,13 +38,12 @@ class AssetUtility{
 
 	}
 
-    public static function generateAssetfromSysFileReference(   $table , $field, $assetData ,$tableLocal = 'sys_file' , $link = false ) {
+    public static function generateAssetfromSysFileReference(   $table , $field, $assetData , $link = false ) {
 
 
         /** @var FileReference $asset */
         $asset = GeneralUtility::makeInstance( "JVE\\JvMediaConnector\\Domain\\Model\\FileReference");
         $asset->setTablenames($table) ;
-        $asset->setTableLocal($tableLocal) ;
         $asset->setFieldname($field) ;
         $asset->setUidLocal($assetData['uid_local']) ;
        // $asset->setUidForeign($assetData['uid_foreign']) ;

@@ -9,11 +9,22 @@ call_user_func(
             'JvBanners',
             'Connector',
             [
-                \JVelletti\JvBanners\Controller\ConnectorController::class => 'dummy,new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
+                \JVelletti\JvBanners\Controller\ConnectorController::class => 'dummy,list,new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
             ],
             // non-cacheable actions
             [
                 \JVelletti\JvBanners\Controller\ConnectorController::class => 'new, create, list, disable, delete, enable, edit, update, reducePoints, addPoints'
+            ]
+        );
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+            'JvBanners',
+            'List',
+            [
+                \JVelletti\JvBanners\Controller\ConnectorController::class => 'list'
+            ],
+            // non-cacheable actions
+            [
+                \JVelletti\JvBanners\Controller\ConnectorController::class => ''
             ]
         );
 
@@ -24,11 +35,20 @@ call_user_func(
                 elements {
                     connector {
                         iconIdentifier = jv_banners-plugin-connector
-                        title = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jv_banners_connector.name
+                        title = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jvbanners_plugin.name
                         description = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jv_banners_connector.description
                         tt_content_defValues {
                             CType = list
                             list_type = jvbanners_connector
+                        }
+                    }
+                    List {
+                        iconIdentifier = jv_banners-plugin-connector
+                        title = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jvbanners_plugin.nameList
+                        description = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jv_banners_connector.description
+                        tt_content_defValues {
+                            CType = list
+                            list_type = jvbanners_list
                         }
                     }
                 }

@@ -3,6 +3,15 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2019-10-03T11:12:41Z" product-name="jv_banners">
 		<header/>
 		<body>
+            <trans-unit id="tx_jvbanners_plugin.name">
+                <source>Banner Dummy Plugin for actions </source>
+            </trans-unit>
+            <trans-unit id="tx_jvbanners_plugin.nameList">
+                <source>Banner Overview </source>
+            </trans-unit>
+            <trans-unit id="tx_jvbanners_plugin.description">
+                <source>See upcomming banners </source>
+            </trans-unit>
 			<trans-unit id="tx_jvbanners_domain_model_connector">
 				<source>Connector</source>
 			</trans-unit>

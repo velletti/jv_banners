@@ -8,9 +8,9 @@ $_EXTKEY = "jv_banners" ;
 /*
 ExtensionManagementUtility::addPlugin(
     Array('LLL:EXT:jv_add2group/Resources/Private/Language/locallang.xlf:add2group.name',
-    'jv_add2group') ,
+    'jv_banners_connector',) ,
     'list_type' ,
-    'jv_add2group'
+    'jv_banners'
 
 );
 */

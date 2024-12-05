@@ -101,8 +101,8 @@ class ConnectorController extends ActionController
      */
     public function listAction(): ResponseInterface
     {
-        $connectors = $this->connectorRepository->findAll();
-        $this->view->assign('connectors', $connectors);
+        $banners = $this->bannerRepository->findAll();
+        $this->view->assign('banners', $banners);
         return $this->htmlResponse();
     }
 
@@ -195,7 +195,7 @@ class ConnectorController extends ActionController
             ->andWhere( $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0 , \PDO::PARAM_INT)) )
             ->orderBy("endtime" , "DESC")
             ->setMaxResults(1)
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
 
@@ -208,7 +208,7 @@ class ConnectorController extends ActionController
 
             $queryBuilder->update('tx_sfbanners_domain_model_banner')
                 ->where($queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter($event->getUId(), \PDO::PARAM_INT)))
-                ->set("deleted", "1")->execute();
+                ->set("deleted", "1")->executeStatement();
         }
 
 
@@ -295,7 +295,7 @@ class ConnectorController extends ActionController
             $assetData = AssetUtility::loadSysFileReference($event->getOrganizer()->getUid() , "tx_jvevents_domain_model_organizer" , "teaser_image") ;
         }
         if( is_array($assetData )) {
-            $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, "sys_file", $link);
+            $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, $link);
 
             /** @var ResourceFactory $factory */
             $factory = GeneralUtility::makeInstance(ResourceFactory::class) ;
