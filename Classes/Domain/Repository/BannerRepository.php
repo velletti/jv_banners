@@ -26,7 +26,7 @@ class BannerRepository extends \DERHANSEN\SfBanners\Domain\Repository\BannerRepo
     public function findActiveFutureBanners(?int $endTime = (86400 *30)): \TYPO3\CMS\Extbase\Persistence\QueryResultInterface|array
     {
         $query = $this->createQuery();
-        $query->setOrderings(['pid' => QueryInterface::ORDER_ASCENDING],['starttime' => QueryInterface::ORDER_ASCENDING]);
+        $query->setOrderings(['pid' => QueryInterface::ORDER_ASCENDING , 'endtime' => QueryInterface::ORDER_ASCENDING]);
         $query->getQuerySettings()->setRespectStoragePage(false)->setIgnoreEnableFields(true);
         $query->matching(
             $query->logicalAnd(
