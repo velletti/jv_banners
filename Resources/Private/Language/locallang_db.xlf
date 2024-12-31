@@ -15,6 +15,12 @@
 			<trans-unit id="tx_jv_banners_connector.description">
 				<source></source>
 			</trans-unit>
+            <trans-unit id="tx_jv_banners_connector.nameList">
+                <source>Banner Liste</source>
+            </trans-unit>
+            <trans-unit id="tx_jv_banners_connector.descriptionList">
+                <source>Show Overview of upcomming banner</source>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

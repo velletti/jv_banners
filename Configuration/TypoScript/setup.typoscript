@@ -23,11 +23,9 @@ plugin.tx_jvbanners_connector {
         callDefaultActionIfActionCantBeResolved = 1
     }
 }
-config.tx_extbase {
-    objects {
-        DERHANSEN\SfBanners\Domain\Model\Banner {
-            className = JVE\JvBanners\Domain\Model\Banner
-        }
+plugin.tx_jvbanners_list.settings {
+    clickPageTypeNum = {$plugin.tx_sfbanners.settings.clickPageTypeNum}
+    pageIds {
+        home = {$jve.pageIds.home}
     }
 }
-

@@ -101,8 +101,13 @@ class ConnectorController extends ActionController
      */
     public function listAction(): ResponseInterface
     {
-        $banners = $this->bannerRepository->findAll();
+        $now = time() ;
+        $endTime = $now + ( 3600 * 24 * 42) ;
+        $banners = $this->bannerRepository->findActiveFutureBanners($endTime );
         $this->view->assign('banners', $banners);
+        $this->view->assign('now', $now);
+        $this->view->assign('endTime', $endTime);
+        $this->view->assign('hundertPercent', $endTime - $now );
         return $this->htmlResponse();
     }
 
@@ -159,12 +164,23 @@ class ConnectorController extends ActionController
         }
         $linkPageName = "Learn / Lernen" ;
         if( $pageId == 56) {
-            $linkPageName = "Home" ;
+            $linkPageName = "Dance / Tanzen" ;
             $event->setTopEvent(1) ;
         }
         $banner->setPid($pageId ) ;
 
         $banner->setTitle( $event->getName());
+
+        if($event->getOrganizer()) {
+            $banner->setOrganizer( $event->getOrganizer()->getUid());
+            if( $event->getOrganizer()->getAccessUsers()) {
+                $users = GeneralUtility::trimExplode( "," , $event->getOrganizer()->getAccessUsers()) ;
+                if( count($users) > 0 ) {
+                    $banner->setFeUser( $users[0]);
+                }
+            }
+        }
+
         $banner->setType(0); // 0 = image, 1 = html Banner
         $banner->setDescription($event->getTeaser());
         $html = $event->getStartDate()->format("d.m.Y") . "<br>\n" ;

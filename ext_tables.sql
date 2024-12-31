@@ -26,4 +26,8 @@ CREATE TABLE tx_jvbanners_domain_model_connector (
 #
 CREATE TABLE tx_sfbanners_domain_model_banner (
     link int(11) DEFAULT '0' NOT NULL,
+    fe_user int(11) DEFAULT '0' NOT NULL,
+    organizer int(11) DEFAULT '0' NOT NULL,
+    key byUser (fe_user),
+    key byOrganizer (organizer),
 );

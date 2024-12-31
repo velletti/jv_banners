@@ -45,7 +45,7 @@ call_user_func(
                     List {
                         iconIdentifier = jv_banners-plugin-connector
                         title = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jvbanners_plugin.nameList
-                        description = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jv_banners_connector.description
+                        description = LLL:EXT:jv_banners/Resources/Private/Language/locallang_db.xlf:tx_jv_banners_connector.descriptionList
                         tt_content_defValues {
                             CType = list
                             list_type = jvbanners_list

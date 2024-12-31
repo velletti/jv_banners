@@ -23,6 +23,11 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     /** @var integer */
     protected $endtime ;
 
+    /** @var integer */
+    protected $feUser ;
+
+    /** @var integer */
+    protected $organizer ;
 
     /** @var string */
     protected string $link ;
@@ -83,6 +88,25 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     public function setLink(string $link): void
     {
         $this->link = $link;
+    }
+
+    public function getFeUser(): int
+    {
+        return $this->feUser;
+    }
+
+    public function setFeUser(int $feUser): void
+    {
+        $this->feUser = $feUser;
+    }
+
+    public function getOrganizer(): int
+    {
+        return $this->organizer;
+    }
+    public function setOrganizer(int $organizer): void
+    {
+        $this->organizer = $organizer;
     }
 
 

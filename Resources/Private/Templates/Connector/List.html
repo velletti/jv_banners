@@ -3,14 +3,85 @@
 
 	<f:section name="content">
 		<f:flashMessages />
-
-		<table  class="row w-100 border border-primary" >
-
+		<h2>Planned Banner: <f:format.date format="d.m H:i">{now}</f:format.date> - <f:format.date format="d.m H:i">{endTime}</f:format.date>
+		</h2>
+		<div  class="w-100 " >
+			<f:variable name="lastPid">{banners.0.pid}</f:variable>
+			<div class="w-100 border-none" >
+				PID: {lastPid}
+			</div>
 			<f:for each="{banners}" as="banner">
-				<div class="col-12 border border-primary">
-					{banner.uid}-{banner.title}
+				<f:if condition="{lastPid} != {banner.pid}">
+					<div class="w-100 border-none" >
+						<f:variable name="lastPid">{banner.pid}</f:variable>
+						<br>PID: {lastPid}
+					</div>
+				</f:if>
+				<div  class="row bg-white border-top" >
+					<f:variable name="width">20</f:variable>
+					<f:variable name="marginright">{endTime - banner.endtime}</f:variable>
+					<f:variable name="marginright">{marginright / hundertPercent}</f:variable>
+					<f:variable name="marginright">{marginright *100}</f:variable>
+					<f:variable name="marginright">{marginright}</f:variable>
+					<f:if condition="{marginright} > 100">
+						<f:then>
+							<f:variable name="marginright">{(marginright -100) * -1 }</f:variable>
+						</f:then>
+					</f:if>
+
+
+					<div class="col-12 col-md-6 border-right" style="height: 90px;">
+						<f:link.action action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}">
+							<b>{banner.pid} - {banner.title}</b>
+						</f:link.action><br>
+
+						<f:format.date format="D d.m H:i">{banner.starttime}</f:format.date> - <f:format.date format="D d.m H:i">{banner.endtime}</f:format.date><br>
+						Clicks: {banner.clicks} / {banner.clicksMax} | Views: {banner.impressions} / {banner.impressionsMax}
+
+					</div>
+					<div class="col-12 col-md-6">
+						<f:render section="weeks"></f:render>
+						<div class="border border-primary" style="display:inline-block; position:absolute; right: {marginright}%; width:{width}%">
+							<f:if condition="{banner.assets}">
+								<f:then>
+									<f:for each="{banner.assets}" as="asset">
+										<f:if condition="{asset.originalResource.properties.link}">
+											<f:then>
+												<f:link.action pageUid="{settings.pageIds.home}" extensionName="sf_banners" pluginName="Pi1" controller="Banner" action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}">
+													<f:image class="d-block w-100 h-auto img-float rounded shadow-lg" image="{asset}"  title="{asset.originalResource.properties.title}" alt="banner-{banner.uid}" width="100c"  maxWidth="100"/>
+												</f:link.action>
+											</f:then>
+											<f:else>
+												<f:link.action pageUid="{settings.pageIds.home}" extensionName="sf_banners" pluginName="Pi1" controller="Banner" action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}">
+													<f:image class="d-block w-100 h-auto img-float rounded shadow-lg" image="{asset}" title="{asset.originalResource.properties.title}" alt="banner-{banner.uid}"  width="120c" maxWidth="120"/>
+												</f:link.action>
+											</f:else>
+										</f:if>
+
+									</f:for>
+								</f:then>
+
+							</f:if>
+						</div>
+
+					</div>
 				</div>
 			</f:for>
-		</table>
+		</div>
+
+	</f:section>
+	<f:section name="bannerPage">
+		<f:switch expression="{pid}">
+			<f:case value="56">Banner Tanzen:</f:case>
+			<f:case value="135">Banner Lernen:</f:case>
+		</f:switch>
+	</f:section>
+    <f:section name="weeks">
+		<div class="border-left h-100" style="position: absolute; display:inline-block; width:1px; left:17%"></div>
+		<div class="border-left h-100" style="position: absolute; display:inline-block; width:1px; left:33%"></div>
+		<div class="border-left h-100" style="position: absolute; display:inline-block; width:1px; left:50%"></div>
+		<div class="border-left h-100" style="position: absolute; display:inline-block; width:1px; left:66%"></div>
+		<div class="border-left h-100" style="position: absolute; display:inline-block; width:1px; left:83%"></div>
 	</f:section>
 </html>
+
