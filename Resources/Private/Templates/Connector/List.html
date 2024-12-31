@@ -17,7 +17,7 @@
 						<br>PID: {lastPid}
 					</div>
 				</f:if>
-				<div  class="row bg-white border-top" >
+				<div  class="row bg-white border-top small" >
 					<f:variable name="width">20</f:variable>
 					<f:variable name="marginright">{endTime - banner.endtime}</f:variable>
 					<f:variable name="marginright">{marginright / hundertPercent}</f:variable>
@@ -30,16 +30,17 @@
 					</f:if>
 
 
-					<div class="col-12 col-md-6 border-right" style="height: 90px;">
-						<f:link.action action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}">
-							<b>{banner.pid} - {banner.title}</b>
+					<div class="col-8 col-sm-7 col-md-6 border-right" style="height: 90px;">
+						<f:link.action action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}" >
+							<b><f:format.crop maxCharacters="50">{banner.title}</f:format.crop></b>
 						</f:link.action><br>
 
 						<f:format.date format="D d.m H:i">{banner.starttime}</f:format.date> - <f:format.date format="D d.m H:i">{banner.endtime}</f:format.date><br>
-						Clicks: {banner.clicks} / {banner.clicksMax} | Views: {banner.impressions} / {banner.impressionsMax}
+						Clicks: {banner.clicks} / {banner.clicksMax} | Views: {banner.impressions} / {banner.impressionsMax}<br>
+						&nbsp;<br>
 
 					</div>
-					<div class="col-12 col-md-6">
+					<div class="col-4 col-sm-5 col-md-6 ">
 						<f:render section="weeks"></f:render>
 						<div class="border border-primary" style="display:inline-block; position:absolute; right: {marginright}%; width:{width}%">
 							<f:if condition="{banner.assets}">
