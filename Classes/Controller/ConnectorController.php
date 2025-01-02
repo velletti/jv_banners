@@ -192,8 +192,8 @@ class ConnectorController extends ActionController
 
 
         $banner->setHtml($html);
-        $banner->setImpressionsMax(10000);
-        $banner->setClicksMax(500);
+        $banner->setImpressionsMax(20000);
+        $banner->setClicksMax(1000);
         $banner->setversionedUid($event->getUid());
         $banner->setLanguage(-1);
         $banner->setLink((string)$event->getUId() );
