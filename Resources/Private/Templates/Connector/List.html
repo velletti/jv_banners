@@ -5,16 +5,16 @@
 		<f:flashMessages />
 		<h2>Planned Banner: <f:format.date format="d.m H:i">{now}</f:format.date> - <f:format.date format="d.m H:i">{endTime}</f:format.date>
 		</h2>
-		<div  class="w-100 " >
+		<div  class="w-100 pb-1" >
 			<f:variable name="lastPid">{banners.0.pid}</f:variable>
 			<div class="w-100 border-none" >
-				PID: {lastPid}
+				<f:render section="bannerPage" arguments="{pid: lastPid}"></f:render>
 			</div>
 			<f:for each="{banners}" as="banner">
 				<f:if condition="{lastPid} != {banner.pid}">
-					<div class="w-100 border-none" >
+					<div class="w-100 border-none pb-1 pt-3" >
 						<f:variable name="lastPid">{banner.pid}</f:variable>
-						<br>PID: {lastPid}
+						<f:render section="bannerPage" arguments="{pid: lastPid}"></f:render>
 					</div>
 				</f:if>
 				<div  class="row bg-white border-top small" >
@@ -30,19 +30,22 @@
 					</f:if>
 
 
-					<div class="col-8 col-sm-7 col-md-6 border-right" style="height: 90px;">
-						<f:link.action action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}" >
-							<b><f:format.crop maxCharacters="50">{banner.title}</f:format.crop></b>
-						</f:link.action><br>
+					<div class="col-6 border-right" style="height: 110px; z-index:100;">
+						<div class="p-0 m-0 max-1-line">
+							<f:link.action action="click" arguments="{banner: banner}" target="{banner.linkTarget}" pageType="{settings.clickPageTypeNum}" >
+								<b><f:format.crop maxCharacters="50">{banner.title}</f:format.crop></b>
+							</f:link.action>
+						</div>
 
-						<f:format.date format="D d.m H:i">{banner.starttime}</f:format.date> - <f:format.date format="D d.m H:i">{banner.endtime}</f:format.date><br>
-						Clicks: {banner.clicks} / {banner.clicksMax} | Views: {banner.impressions} / {banner.impressionsMax}<br>
+
+						<f:format.date format="D d.m H:i">{banner.starttime}</f:format.date> - <br><f:format.date format="D d.m H:i">{banner.endtime}</f:format.date><br>
+						Clicks / views : {banner.clicks} / {banner.impressions} <br>
 						&nbsp;<br>
 
 					</div>
-					<div class="col-4 col-sm-5 col-md-6 ">
+					<div class="col-6">
 						<f:render section="weeks"></f:render>
-						<div class="border border-primary" style="display:inline-block; position:absolute; right: {marginright}%; width:{width}%">
+						<div class="border border-primary" style="display:inline-block; position:absolute; right: {marginright}%; width:{width}%; top: 5%">
 							<f:if condition="{banner.assets}">
 								<f:then>
 									<f:for each="{banner.assets}" as="asset">
