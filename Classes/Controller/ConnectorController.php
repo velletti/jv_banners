@@ -29,6 +29,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\CMS\Extbase\Service\CacheService;
 
 /***
  *
@@ -238,7 +239,9 @@ class ConnectorController extends ActionController
 
         $endTime = PHP_INT_MAX ;
         // with optional param startindays banner can start On same day ( if 1 ) or in one week ( f.e. 7 ) ,
+        $bannerDate = 1 ;
         if( $this->request->hasArgument("startindays") ) {
+            $bannerDate = intval ( $this->request->getArgument("startindays")) ;
             $startindays = intval ( $this->request->getArgument("startindays")) * ( 24 * 3600 )  + time()  - (25 * 3600 )  ;
             if ( $startindays < $banner->getStarttime()) {
                 $banner->setStarttime( $startindays ) ;
@@ -310,6 +313,9 @@ class ConnectorController extends ActionController
             $imageFrom = "Organizer" ;
             $assetData = AssetUtility::loadSysFileReference($event->getOrganizer()->getUid() , "tx_jvevents_domain_model_organizer" , "teaser_image") ;
         }
+        $cacheService = GeneralUtility::makeInstance( CacheService::class) ;
+        $cacheService->clearPageCache( [(int)$returnUid] );
+
         if( is_array($assetData )) {
             $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, $link);
 
@@ -347,7 +353,7 @@ class ConnectorController extends ActionController
                     ->set( 'uid_local' ,  intval( $assetData['uid_local'] ))
                     ->set( 'link' ,  $link )
                     ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($assetDataNew['uid'] , \PDO::PARAM_INT )) )
-                    ->execute();
+                    ->executeStatement();
 
             }
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - " . $event->getName() . " Start: " . date("D.m.Y", $banner->getStarttime()), 'Banner created', ContextualFeedbackSeverity::OK);
@@ -395,7 +401,7 @@ class ConnectorController extends ActionController
         }
         $mail->send() ;
 
-        return $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
+        return $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() , 'showBannerDate' => $bannerDate] , $returnUid) ;
     }
 
     /**

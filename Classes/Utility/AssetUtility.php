@@ -75,10 +75,7 @@ class AssetUtility{
                     }
                 }
             }
-           // var_dump( $queryBuilder->getSQL() );
-            // var_dump( $queryBuilder->getParameters() );
-            // die;
-            $queryBuilder->execute();
+            $queryBuilder->executeStatement();
         } catch ( \Exception $e) {
             // ignore
             // var_dump($e->getMessage() );
