@@ -27,6 +27,9 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     protected $feUser ;
 
     /** @var integer */
+    protected int $hidden  ;
+
+    /** @var integer */
     protected $organizer ;
 
     /** @var string */
@@ -107,6 +110,15 @@ class Banner extends \DERHANSEN\SfBanners\Domain\Model\Banner
     public function setOrganizer(int $organizer): void
     {
         $this->organizer = $organizer;
+    }
+
+    public function getHidden(): int
+    {
+        return $this->hidden;
+    }
+    public function setHidden(int $hidden): void
+    {
+        $this->hidden = $hidden;
     }
 
 

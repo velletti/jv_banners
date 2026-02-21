@@ -287,8 +287,11 @@ class ConnectorController extends ActionController
         // overrule all Start/stop setting if StartIndDays = -1 to be able to stop a banner
 
         if( $this->request->hasArgument("startindays") &&  $this->request->getArgument("startindays") == -1 ) {
-            $banner->setStarttime(time() - 3600 * 24  - 60 );
+            $banner->setStarttime(time() - (3600 * 24  - 60 )); // gestern zählt noch für max Banner
             $banner->setEndtime(time() - 3600 * 24 );
+            if ( $banner->getClicks() * 2 < $banner->getClicksMax() ) {
+                $banner->setHidden(1);
+            }
         }
 
         $link = $this->uriBuilder->reset()
