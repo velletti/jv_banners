@@ -2,6 +2,7 @@
 namespace JVelletti\JvBanners\Controller;
 
 use Exception;
+use JVelletti\JvEvents\Domain\Model\Organizer;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
@@ -28,6 +29,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
+use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Service\CacheService;
 
@@ -173,6 +175,10 @@ class ConnectorController extends ActionController
         $banner->setTitle( $event->getName());
 
         if($event->getOrganizer()) {
+            if ( !$this->hasUserAccess($event->getOrganizer())) {
+                $this->addFlashMessage('NoAccess for Event ' . $event->getUid() . " ", ContextualFeedbackSeverity::ERROR);
+                return $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
+            }
             $banner->setOrganizer( $event->getOrganizer()->getUid());
             if( $event->getOrganizer()->getAccessUsers()) {
                 $users = GeneralUtility::trimExplode( "," , $event->getOrganizer()->getAccessUsers()) ;
@@ -180,6 +186,10 @@ class ConnectorController extends ActionController
                     $banner->setFeUser( $users[0]);
                 }
             }
+        } else {
+            $this->addFlashMessage('Organizer for Event ' . $event->getUid() . " ", ContextualFeedbackSeverity::ERROR);
+            return $this->redirect("show" , "Event" , "JvEvents", ['event' => $event->getUid() ] , $returnUid) ;
+
         }
 
         $banner->setType(0); // 0 = image, 1 = html Banner
@@ -367,9 +377,14 @@ class ConnectorController extends ActionController
             $this->addFlashMessage('Banner for event ' . $event->getUid() . " - Could not find Teaser Image ", ContextualFeedbackSeverity::ERROR);
             $imageFrom = "Not Found" ;
         }
+
         $link = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") .   $link  ;
         $mailtext  =  "Banner: " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) .  "<br>\n" ;
         $mailtext  .= "Status: " . $messageSubject . "<br>\n" ;
+        $invitationText = $this->getInviteText() ;
+        if ( $invitationText ) {
+            $mailtext .= "<br>\n<b>Invitation: " . $invitationText . "wurde verschickt /was sent!</b><br>\n<br>\n" ;
+        }
         $mailtext  .= "Event: " . $event->getName() . "<br>\n" ;
         $mailtext  .= "Image from: " . $imageFrom . "<br>\n" ;
         $mailtext  .= "Assert : " .  ($assetDataNew['uid'] ?? 0 ) . " => uid_local: " . $assetData['uid_local'] .  "<br>\n" ;
@@ -397,12 +412,12 @@ class ConnectorController extends ActionController
         $mail->text(strip_tags( $mailtext)) ;
 
         if( GeneralUtility::validEmail($event->getOrganizer()->getEmail())) {
-            $mail->setSubject("[Banner] " . $messageSubject . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
+            $mail->setSubject("[Banner] " .$invitationText . $messageSubject . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
             $mail->setTo($event->getOrganizer()->getEmail()) ;
             $mail->setCc($fromEmail);
         } else {
-            $mail->setSubject("[Banner-NoMailTo] " . $messageSubject . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
+            $mail->setSubject("[Banner-NoMailTo] " . $invitationText . $messageSubject . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
             $mail->setTo($fromEmail);
         }
@@ -484,5 +499,55 @@ class ConnectorController extends ActionController
         return $this->htmlResponse();
     }
 
+
+    /**
+     * @param Organizer|LazyLoadingProxy $organizer
+     * @return bool
+     */
+    private function hasUserAccess( $organizer ) {
+        if(! is_object( $organizer ) ) {
+            return false ;
+        }
+        $frontendUser = $this->request->getAttribute('frontend.user');
+        if(! is_object( $frontendUser ) || !is_array($frontendUser->user)  ) {
+            return false ;
+        }
+
+        $feuserUid = (int)$frontendUser->user['uid']  ;
+        $users = GeneralUtility::trimExplode("," , $organizer->getAccessUsers() , TRUE ) ;
+        if( in_array( $feuserUid  , $users )) {
+            return true  ;
+        } else {
+            $groups = GeneralUtility::trimExplode("," , $organizer->getAccessGroups() , TRUE ) ;
+            $feuserGroups = GeneralUtility::trimExplode("," ,  $frontendUser->user['usergroup']  , TRUE ) ;
+            foreach( $groups as $group ) {
+                if( in_array( $group  , $feuserGroups )) {
+                    return true  ;
+                }
+            }
+        }
+        return false  ;
+    }
+
+    private function getInviteText() {
+        $frontendUser = $this->request->getAttribute('frontend.user');
+        if(! is_object( $frontendUser ) || !is_array($frontendUser->user)  ) {
+            return '' ;
+        }
+
+        $feuserGroups = GeneralUtility::trimExplode("," ,  $frontendUser->user['usergroup']  , TRUE ) ;
+        // admin User schaltet selber Banner - keine Invitation
+        if( in_array( 4  , $feuserGroups )) {
+            return ""  ;
+        }
+        if( in_array( 20  , $feuserGroups )) {
+            // Gruppe: banner2allowed
+            return " [Jörg + 1] "  ;
+        }
+        if( in_array( 18  , $feuserGroups )) {
+            // Gruppe: bannerallowed
+            return " [Jörg] "  ;
+        }
+    }
 
 }
