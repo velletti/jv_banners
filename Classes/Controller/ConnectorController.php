@@ -285,13 +285,16 @@ class ConnectorController extends ActionController
         }
 
         // overrule all Start/stop setting if StartIndDays = -1 to be able to stop a banner
-
+        $messageSubject = "Banner created/updated" ;
         if( $this->request->hasArgument("startindays") &&  $this->request->getArgument("startindays") == -1 ) {
             $banner->setStarttime(time() - (3600 * 24  - 60 )); // gestern zählt noch für max Banner
             $banner->setEndtime(time() - 3600 * 24 );
-            if ( $banner->getClicks() * 2 < $banner->getClicksMax() ) {
+            $messageSubject = "Banner stopped" ;
+            if ( $banner->getImpressions() * 2 < $banner->getImpressionsMax() ) {
                 $banner->setHidden(1);
+                $messageSubject = "Banner deleted" ;
             }
+
         }
 
         $link = $this->uriBuilder->reset()
@@ -366,9 +369,10 @@ class ConnectorController extends ActionController
         }
         $link = GeneralUtility::getIndpEnv("TYPO3_REQUEST_HOST") .   $link  ;
         $mailtext  =  "Banner: " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) .  "<br>\n" ;
+        $mailtext  .= "Status: " . $messageSubject . "<br>\n" ;
         $mailtext  .= "Event: " . $event->getName() . "<br>\n" ;
         $mailtext  .= "Image from: " . $imageFrom . "<br>\n" ;
-        $mailtext  .= "Assert : " .  $assetDataNew['uid'] . " => uid_local: " . $assetData['uid_local'] .  "<br>\n" ;
+        $mailtext  .= "Assert : " .  ($assetDataNew['uid'] ?? 0 ) . " => uid_local: " . $assetData['uid_local'] .  "<br>\n" ;
         $mailtext .=  "Text: "  . $event->getTeaser() . "<br>\n"  . $banner->getHtml() . "<br>\n" . "<br>\n";
         $mailtext .=  "Link: <a href=\""  .$link. "\"> " . $link . "</a><br>\n" ;
 
@@ -393,12 +397,12 @@ class ConnectorController extends ActionController
         $mail->text(strip_tags( $mailtext)) ;
 
         if( GeneralUtility::validEmail($event->getOrganizer()->getEmail())) {
-            $mail->setSubject("[Banner] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
+            $mail->setSubject("[Banner] " . $messageSubject . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
             $mail->setTo($event->getOrganizer()->getEmail()) ;
             $mail->setCc($fromEmail);
         } else {
-            $mail->setSubject("[Banner-NoMailTo] Banner aktiviert/activated " . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
+            $mail->setSubject("[Banner-NoMailTo] " . $messageSubject . date( "d.m H:i " , $banner->getStarttime()) . " - " . date( "d.m H:i " , $banner->getEndtime()) ) ;
 
             $mail->setTo($fromEmail);
         }
