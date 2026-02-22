@@ -285,14 +285,14 @@ class ConnectorController extends ActionController
         }
 
         // overrule all Start/stop setting if StartIndDays = -1 to be able to stop a banner
-        $messageSubject = "Banner created/updated" ;
+        $messageSubject = "Banner created/updated - " ;
         if( $this->request->hasArgument("startindays") &&  $this->request->getArgument("startindays") == -1 ) {
             $banner->setStarttime(time() - (3600 * 24  - 60 )); // gestern zählt noch für max Banner
             $banner->setEndtime(time() - 3600 * 24 );
-            $messageSubject = "Banner stopped" ;
+            $messageSubject = "Banner stopped - " ;
             if ( $banner->getImpressions() * 2 < $banner->getImpressionsMax() ) {
                 $banner->setHidden(1);
-                $messageSubject = "Banner deleted" ;
+                $messageSubject = "Banner deleted - " ;
             }
 
         }
