@@ -14,7 +14,7 @@ class AssetUtility{
 	public static function loadSysFileReference( $uid_foreign,  $table , $field, $lng=-3 ) {
 
         /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance( "TYPO3\\CMS\\Core\\Database\\ConnectionPool");
+        $connectionPool = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Database\ConnectionPool::class);
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $connectionPool->getConnectionForTable('sys_file_reference')->createQueryBuilder();
@@ -42,7 +42,7 @@ class AssetUtility{
 
 
         /** @var FileReference $asset */
-        $asset = GeneralUtility::makeInstance( "JVE\\JvMediaConnector\\Domain\\Model\\FileReference");
+        $asset = GeneralUtility::makeInstance( \JVE\JvMediaConnector\Domain\Model\FileReference::class);
         $asset->setTablenames($table) ;
         $asset->setFieldname($field) ;
         $asset->setUidLocal($assetData['uid_local']) ;
@@ -56,15 +56,15 @@ class AssetUtility{
 	}
 
 
-    public static function updateUidLocal($uid , $row ) {
+    public static function updateUidLocal($uid , $row ): void {
 
         /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance( "TYPO3\\CMS\\Core\\Database\\ConnectionPool");
+        $connectionPool = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Database\ConnectionPool::class);
         try {
             /** @var QueryBuilder $queryBuilder */
             $queryBuilder = $connectionPool->getConnectionForTable('sys_file_reference')->createQueryBuilder();
             $queryBuilder->update('sys_file_reference')
-                ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter( $uid , PDO::PARAM_INT)) ) ;
+                ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter( $uid , \TYPO3\CMS\Core\Database\Connection::PARAM_INT)) ) ;
 
             foreach ( $row as $field => $value ) {
                 if( $field != "uid") {

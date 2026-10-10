@@ -77,16 +77,20 @@ class ConnectorController extends ActionController
      * @var EventRepository
      */
     private $eventRepository;
+    public function __construct(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager $persistenceManager, private readonly \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool, private readonly \TYPO3\CMS\Extbase\Service\CacheService $cacheService, private readonly \TYPO3\CMS\Core\Resource\ResourceFactory $resourceFactory)
+    {
+        $this->persistenceManager = $persistenceManager;
+    }
 
-    public function initializeAction()
+    public function initializeAction(): void
     {
         parent::initializeAction();
 
-        $this->bannerRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\BannerRepository") ;
+        $this->bannerRepository = GeneralUtility::makeInstance(\JVelletti\JvBanners\Domain\Repository\BannerRepository::class) ;
 
-        $this->eventRepository = GeneralUtility::makeInstance("JVelletti\\JvEvents\\Domain\\Repository\\EventRepository") ;
-        $this->connectorRepository = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Repository\\ConnectorRepository") ;
-        $this->persistenceManager = GeneralUtility::makeInstance("TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager") ;
+        $this->eventRepository = GeneralUtility::makeInstance(\JVelletti\JvEvents\Domain\Repository\EventRepository::class) ;
+        $this->connectorRepository = GeneralUtility::makeInstance(\JVelletti\JvBanners\Domain\Repository\ConnectorRepository::class) ;
+        $this->persistenceManager = $this->persistenceManager ;
     }
     /**
      * action Dummy
@@ -131,8 +135,8 @@ class ConnectorController extends ActionController
      * @throws NoSuchArgumentException
      * @throws FileDoesNotExistException
      * @throws IllegalObjectTypeException
-     * @IgnoreValidation("event")
      */
+    #[IgnoreValidation(['argumentName' => 'event'])]
     public function createAction(Event $event)
     {
         if( $this->request->hasArgument("returnPid")) {
@@ -141,7 +145,7 @@ class ConnectorController extends ActionController
 
 
         if( !$event || !$returnUid ) {
-            $this->addFlashMessage('Missing Arguments event and returnUid! ', AbstractMessage::ERROR);
+            $this->addFlashMessage('Missing Arguments event and returnUid! ', \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR);
             try {
                 return $this->redirect("show", "Event", "JvEvents");
             } catch (Exception $e) {
@@ -150,7 +154,7 @@ class ConnectorController extends ActionController
         }
 
         /** @var Banner $banner */
-        $banner = GeneralUtility::makeInstance("JVelletti\\JvBanners\\Domain\\Model\\Banner") ;
+        $banner = GeneralUtility::makeInstance(\JVelletti\JvBanners\Domain\Model\Banner::class) ;
 
         $cat = $event->getEventCategory() ;
 
@@ -211,15 +215,15 @@ class ConnectorController extends ActionController
 
         // delete any existing banner for same event
         /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance( "TYPO3\\CMS\\Core\\Database\\ConnectionPool");
+        $connectionPool = $this->connectionPool;
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $connectionPool->getQueryBuilderForTable('tx_sfbanners_domain_model_banner') ;
         $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $row = $queryBuilder ->select('uid' , 'starttime', 'endtime', 'impressions','clicks'   ) ->from('tx_sfbanners_domain_model_banner')
-            ->where( $queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter( $event->getUId() , \PDO::PARAM_INT)) )
-            ->andWhere( $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0 , \PDO::PARAM_INT)) )
-            ->andWhere( $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0 , \PDO::PARAM_INT)) )
+            ->where( $queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter( $event->getUId() , \TYPO3\CMS\Core\Database\Connection::PARAM_INT)) )
+            ->andWhere( $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0 , \TYPO3\CMS\Core\Database\Connection::PARAM_INT)) )
+            ->andWhere( $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0 , \TYPO3\CMS\Core\Database\Connection::PARAM_INT)) )
             ->orderBy("endtime" , "DESC")
             ->setMaxResults(1)
             ->executeQuery()
@@ -234,7 +238,7 @@ class ConnectorController extends ActionController
             $banner->setClicksMax((int)$row['clicks'] + 500);
 
             $queryBuilder->update('tx_sfbanners_domain_model_banner')
-                ->where($queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter($event->getUId(), \PDO::PARAM_INT)))
+                ->where($queryBuilder->expr()->eq('link', $queryBuilder->createNamedParameter($event->getUId(), \TYPO3\CMS\Core\Database\Connection::PARAM_INT)))
                 ->set("deleted", "1")->executeStatement();
         }
 
@@ -329,14 +333,14 @@ class ConnectorController extends ActionController
             $imageFrom = "Organizer" ;
             $assetData = AssetUtility::loadSysFileReference($event->getOrganizer()->getUid() , "tx_jvevents_domain_model_organizer" , "teaser_image") ;
         }
-        $cacheService = GeneralUtility::makeInstance( CacheService::class) ;
+        $cacheService = $this->cacheService ;
         $cacheService->clearPageCache( [(int)$returnUid] );
 
         if( is_array($assetData )) {
             $asset = AssetUtility::generateAssetfromSysFileReference("tx_sfbanners_domain_model_banner", "assets", $assetData, $link);
 
             /** @var ResourceFactory $factory */
-            $factory = GeneralUtility::makeInstance(ResourceFactory::class) ;
+            $factory = $this->resourceFactory ;
 
             // ******* Maybe we need to make Uid of storage (fileadmin/userupload/ configurable !
             $storage = $factory->getStorageObject(1);
@@ -356,7 +360,7 @@ class ConnectorController extends ActionController
             if( $assetDataNew && $assetDataNew['uid'] > 0  && $assetData['uid_local'] ) {
 
                 /** @var ConnectionPool $connectionPool */
-                $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+                $connectionPool = $this->connectionPool;
 
                 /** @var Connection $dbConnectionForSysRef */
                 $dbConnectionForSysRef = $connectionPool->getConnectionForTable('sys_file_reference');
@@ -368,7 +372,7 @@ class ConnectorController extends ActionController
                     ->update('sys_file_reference')
                     ->set( 'uid_local' ,  intval( $assetData['uid_local'] ))
                     ->set( 'link' ,  $link )
-                    ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($assetDataNew['uid'] , \PDO::PARAM_INT )) )
+                    ->where( $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($assetDataNew['uid'] , \TYPO3\CMS\Core\Database\Connection::PARAM_INT )) )
                     ->executeStatement();
 
             }
@@ -430,9 +434,9 @@ class ConnectorController extends ActionController
      * action edit
      *
      * @param Connector $connector
-     * @IgnoreValidation("connector")
      * @return void
      */
+    #[IgnoreValidation(['argumentName' => 'connector'])]
     public function editAction(Connector $connector): ResponseInterface
     {
        // $this->view->assign('connector', $connector);
@@ -446,7 +450,7 @@ class ConnectorController extends ActionController
      */
     public function updateAction(Connector $connector)
     {
-        $this->addFlashMessage('The object NOT was updated. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
+        $this->addFlashMessage('The object NOT was updated. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING);
       //  $this->connectorRepository->update($connector);
         return $this->redirect('list');
     }
@@ -458,7 +462,7 @@ class ConnectorController extends ActionController
      */
     public function deleteAction(Connector $connector): ResponseInterface
     {
-        $this->addFlashMessage('The object was NOT deleted. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', AbstractMessage::WARNING);
+        $this->addFlashMessage('The object was NOT deleted. Please be aware that this action is publicly accessible unless you implement an access check. See https://docs.typo3.org/typo3cms/extensions/extension_builder/User/Index.html', '', \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING);
      //   $this->connectorRepository->remove($connector);
         return $this->redirect('list');
     }

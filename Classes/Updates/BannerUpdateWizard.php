@@ -25,6 +25,9 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 class BannerUpdateWizard implements UpgradeWizardInterface
 {
 
+    public function __construct(private readonly \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    {
+    }
     public function getTitle(): string
     {
         return 'EXT:JvBanner: Update Link to JvEvent ';
@@ -69,7 +72,7 @@ class BannerUpdateWizard implements UpgradeWizardInterface
 
     protected function getMigrationRecords(): array
     {
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         $queryBuilder = $connectionPool->getQueryBuilderForTable('sys_file_reference');
         $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
@@ -95,7 +98,7 @@ class BannerUpdateWizard implements UpgradeWizardInterface
             $row['link']
         ) ;
 
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable('sys_file_reference');
         $queryBuilder->update('sys_file_reference')
             ->set('link', $newLink)
             ->where(

@@ -16,5 +16,9 @@ ExtensionManagementUtility::addPlugin(
 */
 
 // BOTH Lines are needed to see the Flexform in Backend !!1
-$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['jvbanners_connector'] = 'pi_flexform';
-ExtensionManagementUtility::addPiFlexFormValue('jvbanners_connector', 'FILE:EXT:jv_banners/Configuration/FlexForms/flexform.xml');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', '--div--;Configuration,pi_flexform,', 'jvbanners_connector', 'after:subheader');
+ExtensionManagementUtility::addPiFlexFormValue('*', 'FILE:EXT:jv_banners/Configuration/FlexForms/flexform.xml', 'jvbanners_connector');
+
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin('JvBanners', 'Connector', 'LLL:EXT:jv_banners/Resources/Private/Language/locallang.xlf:tx_jvbanners_plugin.name', 'jv_banners-plugin-connector');
+
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin('JvBanners', 'List', 'LLL:EXT:jv_banners/Resources/Private/Language/locallang.xlf:tx_jvbanners_plugin.nameList', 'jv_banners-plugin-connector');

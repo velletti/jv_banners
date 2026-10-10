@@ -40,7 +40,7 @@ class Connector extends AbstractEntity
      * @param string $eventname
      * @return void
      */
-    public function setEventname($eventname)
+    public function setEventname($eventname): void
     {
         $this->eventname = $eventname;
     }

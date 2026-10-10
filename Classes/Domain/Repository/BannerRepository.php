@@ -45,7 +45,7 @@ class BannerRepository extends \DERHANSEN\SfBanners\Domain\Repository\BannerRepo
     /**
      * @param QueryInterface $query
      */
-    public function showSql($query , $file , $line ) {
+    public function showSql($query , $file , $line ): void {
         $queryParser = GeneralUtility::makeInstance(Typo3DbQueryParser::class);
 
         $sqlquery = $queryParser->convertQueryToDoctrineQueryBuilder($query)->getSQL() ;
