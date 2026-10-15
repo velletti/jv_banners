@@ -30,7 +30,7 @@ class AssetUtility{
             $expr->eq('fieldname', $queryBuilder->createNamedParameter($field, Connection::PARAM_STR))
         ) ;
 
-        $response = $queryBuilder->execute()->fetch();
+        $response = $queryBuilder->executeQuery()->fetchAssociative();
 
 
 

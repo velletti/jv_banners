@@ -35,7 +35,8 @@ final class JVellettiJvBannersCTypeMigration extends AbstractListTypeToCTypeUpda
     protected function getListTypeToCTypeMapping(): array
     {
         return [
-            'jvbanners_connector' => 'jvbanners_list'
+            'jvbanners_connector' => 'jvbanners_connector' ,
+            'jvbanners_list' => 'jvbanners_list'
         ];
     }
 }
